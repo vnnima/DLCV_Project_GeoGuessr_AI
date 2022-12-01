@@ -16,7 +16,6 @@ def extract_coordinates(filenames):
     coordinates = []
 
     for filename in filenames:
-        filename = filename.split('_')[1]
         latitude = filename.split(',')[0]
         longitude = filename.split(',')[1].replace('.jpg', "")
         coordinates.append((filename, latitude, longitude))
@@ -36,7 +35,7 @@ def main():
     # Write the coordinates to a csv file
     with open("coordinates.csv", "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["filename","latitude", "longitude"])
+        writer.writerow(["filename", "latitude", "longitude"])
         writer.writerows(coordinates)
 
 
