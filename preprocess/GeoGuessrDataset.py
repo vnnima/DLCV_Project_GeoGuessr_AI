@@ -7,12 +7,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
+import torch.nn.functional as F
+
 
 
 class GeoGuessrDataset(Dataset):
     """GeoGuessr dataset."""
 
-    def __init__(self, csv_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, transform=None, num_classes=32768):
         """
         Args:
             csv_file (string): Path to the csv file with coordinates.
@@ -20,6 +22,7 @@ class GeoGuessrDataset(Dataset):
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
+        self.num_classes = num_classes
         self.coordinates = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
@@ -35,6 +38,10 @@ class GeoGuessrDataset(Dataset):
                                 self.coordinates.iloc[idx, 0])
         image = io.imread(img_name)
         geohash = self.coordinates.iloc[idx, 3]
+        
+        # Convert to one-hot vector
+        geohash = F.one_hot(torch.tensor(geohash), num_classes=self.num_classes)
+        
         sample = {'image': image, 'geohash': geohash}
 
         if self.transform:
