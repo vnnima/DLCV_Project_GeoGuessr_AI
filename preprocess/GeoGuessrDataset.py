@@ -45,7 +45,7 @@ class GeoGuessrDataset(Dataset):
         sample = {'image': image, 'geohash': geohash}
 
         if self.transform:
-            sample = self.transform(sample)
+            sample["image"] = self.transform(sample["image"])
 
         return sample
     
@@ -64,3 +64,4 @@ class ToTensor(object):
         # not 100% sure if transforming y is of any use yet
         return {'image': torch.from_numpy(image),
                 'geohash': torch.from_numpy(np.array(geohash))}
+    
