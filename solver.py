@@ -62,7 +62,7 @@ class Solver:
 
         # Define default values for parameters.
         defaults = {
-            'loss': 'CrossEntropyLoss',
+            'loss': HaversineLoss(),
             'loss_config': {},
             'optimizer': 'SGD',
             'optimizer_params': {'lr': 1e-2},
@@ -253,7 +253,7 @@ class Solver:
             torch.cuda.empty_cache()
             inputs = müll['image'].to(self.device)
             labels = müll['cluster'].long().to(self.device)
-            print('was soll der mist')    
+
                 #forward pass
             outputs = self.model(inputs)
 
@@ -310,47 +310,49 @@ class Solver:
         }
 
 
-
-def haversine(pred_cent:tuple, ground_tru: tuple):
-
-  """
-  Calculate the Haversine distance between two coordinates.
-  
-  Args:
-    coord1 (tuple): The first coordinate, given as a tuple of (latitude, longitude).
-    coord2 (tuple): The second coordinate, given as a tuple of (latitude, longitude).
-  
-  Returns:
-    float: The Haversine distance between the two coordinates, in kilometers.
-  """
-  return haversine(pred_cent, ground_tru)
+class HaversineLoss():
 
 
-def haversine_backward(pred, target):
-  """
-  Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates.
-  
-  Args:
-    pred (torch.Tensor): The predicted coordinates, given as a tensor of shape (batch_size, 2).
-    target (torch.Tensor): The target coordinates, given as a tensor of shape (batch_size, 2).
-  
-  Returns:
-    torch.Tensor: The gradients of the Haversine distance loss with respect to the predicted coordinates, given as a tensor of shape (batch_size, 2).
-  """
-  # Convert the predicted and target coordinates to radians
-  pred_rad = torch.deg2rad(pred)
-  target_rad = torch.deg2rad(target)
-  
-  # Calculate the Haversine distance between the predicted and target coordinates
-  lat1, lon1 = pred_rad[:, 0], pred_rad[:, 1]
-  lat2, lon2 = target_rad[:, 0], target_rad[:, 1]
-  a = torch.sin((lat2 - lat1) / 2)**2 + torch.cos(lat1) * torch.cos(lat2) * torch.sin((lon2 - lon1) / 2)**2
-  c = 2 * torch.atan2(torch.sqrt(a), torch.sqrt(1 - a))
-  distance = 6371 * c  # 6371 is the radius of the Earth in kilometers
-  
-  # Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates
-  grads = torch.zeros_like(pred)
-  grads[:, 0] = (torch.cos(lat2) * torch.sin(lon2 - lon1) - torch.sin(lat2) * torch.cos(lat1) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
-  grads[:, 1] = (torch.cos(lat1) * torch.sin(lat2) - torch.sin(lat1) * torch.cos(lat2) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
-  
-  return grads
+    def forward(pred_cent:tuple, ground_tru: tuple):
+
+        """
+        Calculate the Haversine distance between two coordinates.
+        
+        Args:
+            coord1 (tuple): The first coordinate, given as a tuple of (latitude, longitude).
+            coord2 (tuple): The second coordinate, given as a tuple of (latitude, longitude).
+        
+        Returns:
+            float: The Haversine distance between the two coordinates, in kilometers.
+        """
+        return haversine(pred_cent, ground_tru)
+
+
+    def backward(pred, target):
+        """
+        Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates.
+        
+        Args:
+            pred (torch.Tensor): The predicted coordinates, given as a tensor of shape (batch_size, 2).
+            target (torch.Tensor): The target coordinates, given as a tensor of shape (batch_size, 2).
+        
+        Returns:
+            torch.Tensor: The gradients of the Haversine distance loss with respect to the predicted coordinates, given as a tensor of shape (batch_size, 2).
+        """
+    # Convert the predicted and target coordinates to radians
+        pred_rad = torch.deg2rad(pred)
+        target_rad = torch.deg2rad(target)
+        
+        # Calculate the Haversine distance between the predicted and target coordinates
+        lat1, lon1 = pred_rad[:, 0], pred_rad[:, 1]
+        lat2, lon2 = target_rad[:, 0], target_rad[:, 1]
+        a = torch.sin((lat2 - lat1) / 2)**2 + torch.cos(lat1) * torch.cos(lat2) * torch.sin((lon2 - lon1) / 2)**2
+        c = 2 * torch.atan2(torch.sqrt(a), torch.sqrt(1 - a))
+        distance = 6371 * c  # 6371 is the radius of the Earth in kilometers
+        
+        # Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates
+        grads = torch.zeros_like(pred)
+        grads[:, 0] = (torch.cos(lat2) * torch.sin(lon2 - lon1) - torch.sin(lat2) * torch.cos(lat1) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
+        grads[:, 1] = (torch.cos(lat1) * torch.sin(lat2) - torch.sin(lat1) * torch.cos(lat2) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
+        
+        return grads
