@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm.notebook import tnrange
-
+from haversine import haversine
 
 
 class Solver:
@@ -197,6 +197,8 @@ class Solver:
                 #find prdiction by highest score
                 predicted = torch.argmax(outputs.data, 1)
                 #keep track of prediction performance
+
+                #l= havers(centroid[predicted], ground_tru[input]
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
         #evaluate accuracy         
@@ -240,58 +242,58 @@ class Solver:
         best_val_acc = 0
         best_params = None
         #show training progress
-        for epoch in (pbar := tnrange(num_epochs)): 
+        """for epoch in (pbar := tnrange(num_epochs)): 
             self.epoch += 1
             #for gpu?
             #loss_history = torch.empty(len(dataloader))
-            loss_history = []
-            
+            loss_history = []"""
+        loss_history = []           
             #self.model.train()
-            for i, müll in enumerate(dataloader):
-                torch.cuda.empty_cache()
-                inputs = müll['image'].to(self.device)
-                labels = müll['cluster'].to(self.device)
-                print('was soll der mist')    
-                    #forward pass
-                outputs = self.model(inputs)
+        for i, müll in enumerate(dataloader):
+            torch.cuda.empty_cache()
+            inputs = müll['image'].to(self.device)
+            labels = müll['cluster'].long().to(self.device)
+            print('was soll der mist')    
+                #forward pass
+            outputs = self.model(inputs)
 
-                    #loss and gradient computation
-                loss = self.loss(outputs, labels)
-                loss.backward()
-                   
-                    #update parameters 
-                self.optimizer.step()
-                self.optimizer.zero_grad()
-                    
+                #loss and gradient computation
+            loss = self.loss(outputs, labels)
+            loss.backward()
                 
-                    #store loss history
-                loss_history.append(loss.item())
-                torch.cuda.empty_cache()
-               
-
-            self.loss_history.append(sum(loss_history)/i)
-
-                #see training accuracy and store it
-            train_acc =self.test(self.data_train, num_samples=self.num_train_samples)
-            self.train_acc.append(train_acc)
-                #see validation accuracy and store it
-            val_acc =self.test(self.data_val, num_samples=self.num_val_samples)
-            self.val_acc.append(val_acc)
+                #update parameters 
+            self.optimizer.step()
+            self.optimizer.zero_grad()
                 
-                #apply scheduler if given
-            if self.scheduler is not None:
-                self.scheduler.step()
             
-            #track loss history per epoch
-            train_loss = torch.mean(loss_history).item()
-            self.loss_history.append(train_loss)
-                
-                #safe the model if it is better than previous one
-            if val_acc>best_val_acc:
-                best_val_acc = val_acc
-                self.save("./models/bestmodel")
-            pbar.set_description(f'Validation accuracy: {val_acc:5.2f}%')
+                #store loss history
+            loss_history.append(loss.item())
+            torch.cuda.empty_cache()
+            
+
+        self.loss_history.append(sum(loss_history)/i)
+
+            #see training accuracy and store it
+        train_acc =self.test(self.data_train, num_samples=self.num_train_samples)
+        self.train_acc.append(train_acc)
+            #see validation accuracy and store it
+        val_acc =self.test(self.data_val, num_samples=self.num_val_samples)
+        self.val_acc.append(val_acc)
+            
+            #apply scheduler if given
+        if self.scheduler is not None:
+            self.scheduler.step()
         
+        #track loss history per epoch
+        train_loss = torch.mean(loss_history).item()
+        self.loss_history.append(train_loss)
+            
+            #safe the model if it is better than previous one
+        if val_acc>best_val_acc:
+            best_val_acc = val_acc
+            self.save("./models/bestmodel")
+        #pbar.set_description(f'Validation accuracy: {val_acc:5.2f}%')
+    
         #initalize best model
         
         self.load("./models/bestmodel")
@@ -308,3 +310,47 @@ class Solver:
         }
 
 
+
+def haversine(pred_cent:tuple, ground_tru: tuple):
+
+  """
+  Calculate the Haversine distance between two coordinates.
+  
+  Args:
+    coord1 (tuple): The first coordinate, given as a tuple of (latitude, longitude).
+    coord2 (tuple): The second coordinate, given as a tuple of (latitude, longitude).
+  
+  Returns:
+    float: The Haversine distance between the two coordinates, in kilometers.
+  """
+  return haversine(pred_cent, ground_tru)
+
+
+def haversine_backward(pred, target):
+  """
+  Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates.
+  
+  Args:
+    pred (torch.Tensor): The predicted coordinates, given as a tensor of shape (batch_size, 2).
+    target (torch.Tensor): The target coordinates, given as a tensor of shape (batch_size, 2).
+  
+  Returns:
+    torch.Tensor: The gradients of the Haversine distance loss with respect to the predicted coordinates, given as a tensor of shape (batch_size, 2).
+  """
+  # Convert the predicted and target coordinates to radians
+  pred_rad = torch.deg2rad(pred)
+  target_rad = torch.deg2rad(target)
+  
+  # Calculate the Haversine distance between the predicted and target coordinates
+  lat1, lon1 = pred_rad[:, 0], pred_rad[:, 1]
+  lat2, lon2 = target_rad[:, 0], target_rad[:, 1]
+  a = torch.sin((lat2 - lat1) / 2)**2 + torch.cos(lat1) * torch.cos(lat2) * torch.sin((lon2 - lon1) / 2)**2
+  c = 2 * torch.atan2(torch.sqrt(a), torch.sqrt(1 - a))
+  distance = 6371 * c  # 6371 is the radius of the Earth in kilometers
+  
+  # Calculate the gradients of the Haversine distance loss with respect to the predicted coordinates
+  grads = torch.zeros_like(pred)
+  grads[:, 0] = (torch.cos(lat2) * torch.sin(lon2 - lon1) - torch.sin(lat2) * torch.cos(lat1) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
+  grads[:, 1] = (torch.cos(lat1) * torch.sin(lat2) - torch.sin(lat1) * torch.cos(lat2) * torch.cos(lon2 - lon1)) / torch.sqrt(1 - a)
+  
+  return grads
