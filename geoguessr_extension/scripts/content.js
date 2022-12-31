@@ -1,13 +1,3 @@
-// chrome.browserAction.onClicked.addEventListener(async () => {
-// 	// Take a screenshot of the current tab
-// 	const screenshot = await chrome.tabs.captureVisibleTab();
-
-// 	// Download the screenshot
-// 	chrome.downloads.download({
-// 		url: screenshot,
-// 		filename: "screenshot.png",
-// 	});
-// });
 /**
  *
  * @param {HTMLElement} elem
@@ -60,40 +50,4 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			console.log("screenshot_content_end");
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
 	}
-
-	// if (request.msg == "screenshot_content") {
-	// 	console.log("screenshot_content");
-	// 	const tab = request.tab;
-	// 	const compassElem = document.querySelector(".compass__indicator");
-
-	// 	// Move compass to the center
-	// 	compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, -1000));
-	// 	// chrome.runtime.sendMessage({ msg: "screenshot" });
-	// 	await takeScreenshot();
-
-	// 	// sleep for 1 second
-	// 	await new Promise((resolve) => setTimeout(resolve, 3000));
-
-	// 	// Move compass to the right
-	// 	compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -1000, 0));
-	// 	// chrome.runtime.sendMessage({ msg: "screenshot" });
-	// 	await takeScreenshot();
-
-	// 	await new Promise((resolve) => setTimeout(resolve, 3000));
-
-	// 	// Move compass to the bottom
-	// 	compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, 1000));
-	// 	// chrome.runtime.sendMessage({ msg: "screenshot" });
-	// 	await takeScreenshot();
-
-	// 	await new Promise((resolve) => setTimeout(resolve, 3000));
-
-	// 	// Move compass to the left
-	// 	compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 1000, 0));
-	// 	// chrome.runtime.sendMessage({ msg: "screenshot" });
-	// 	await takeScreenshot();
-
-	// 	compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
-	// 	// chrome.runtime.sendMessage({ msg: "screenshot" });
-	// } else
 });
