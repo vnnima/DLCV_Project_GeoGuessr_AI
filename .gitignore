@@ -3,3 +3,4 @@ venv/
 data/
 misc/
 __pycache__/
+server/node_modules/

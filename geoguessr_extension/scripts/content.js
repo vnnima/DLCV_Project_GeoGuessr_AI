@@ -1,3 +1,7 @@
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  *
  * @param {HTMLElement} elem
@@ -22,32 +26,34 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			// Move compass to the top
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, -1000));
 			// sleep for 1 second
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-			chrome.runtime.sendMessage({ msg: "screenshot__", direction: "right" });
+			await sleep(3000);
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "right" });
 			break;
 		case "screenshot_content_right":
 			console.log("screenshot_content_right");
 			// Move compass to the left
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 1000, 0));
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-			chrome.runtime.sendMessage({ msg: "screenshot__", direction: "bottom" });
+			await sleep(3000);
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom" });
 			break;
 		case "screenshot_content_bottom":
 			console.log("screenshot_content_bottom");
 			// Move compass to the top
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, 1000));
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-			chrome.runtime.sendMessage({ msg: "screenshot__", direction: "left" });
+			await sleep(3000);
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "left" });
 			break;
 		case "screenshot_content_left":
 			console.log("screenshot_content_left");
 			// Move compass to the left
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -1000, 0));
-			await new Promise((resolve) => setTimeout(resolve, 3000));
-			chrome.runtime.sendMessage({ msg: "screenshot__", direction: "end" });
+			await sleep(3000);
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "end" });
 			break;
 		case "screenshot_content_end":
 			console.log("screenshot_content_end");
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
+			chrome.runtime.sendMessage({ msg: "screenshot_end" });
+			break;
 	}
 });
