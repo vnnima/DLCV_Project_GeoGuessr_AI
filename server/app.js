@@ -10,7 +10,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" })); // for form data
 app.use(cors());
 
-function callPythonScript() {
+function callPythonScript(res) {
 	let dataToSend;
 	const python = spawn("python", ["python/script.py"]);
 
@@ -20,11 +20,14 @@ function callPythonScript() {
 
 	python.on("close", (code) => {
 		console.log(`child process close all stdio with code ${code}`);
-		// send data to browser
 		console.log(dataToSend);
-		res.json({ name: "SUCCESS: Image received.", data: dataToSend });
+		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend });
 	});
 }
+
+app.get("/", (req, res) => {
+	res.send("Hello World!");
+});
 
 // Create an endpoint to receive the image data
 app.post("/images", async (req, res) => {
@@ -33,9 +36,12 @@ app.post("/images", async (req, res) => {
 	const filePath = path.join(__dirname, "images", `image_${direction}.png`);
 
 	ImageDataURI.outputFile(dataUri, filePath);
-	console.log("HI");
 
-	// spawn new child process to call the python script
+	if (isFinal) {
+		callPythonScript(res);
+		return;
+	}
+	res.json({ name: "SUCCESS: Image received." });
 });
 
 // Start the server

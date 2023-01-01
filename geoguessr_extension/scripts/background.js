@@ -1,13 +1,16 @@
-async function upload(file, direction, isFinal) {
+async function upload(dataUri, direction, isFinal) {
 	fetch("http://localhost:3000/images", {
 		method: "POST",
 		headers: { Accept: "application/json", "Content-Type": "application/json" },
-		// body: formData,
-		body: JSON.stringify({ image: dataUrl, direction, isFinal }),
+		body: JSON.stringify({ image: dataUri, direction, isFinal }),
 	})
 		.then((response) => response.json())
 		.then((data) => {
 			console.log("Success:", data);
+			if (data.result) {
+				// Model has evaluated the image
+				chrome.runtime.sendMessage({ msg: "image_evaluated", result: data.result });
+			}
 		})
 		.catch((error) => {
 			console.log("Error:", error);
@@ -23,10 +26,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
 		if (tab?.url?.startsWith("chrome://")) return undefined;
 		if (tab?.url?.startsWith("devtools://")) return undefined;
 
-		chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
-			console.log(dataUrl);
-		});
-
 		// // Take a screenshot of the current tab
 		const screenshotUri = await chrome.tabs.captureVisibleTab();
 		await upload(screenshotUri, request.direction, request.nextDirection === "end");
@@ -38,7 +37,9 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			conflictAction: "uniquify",
 		});
 
-		// send message to content script
+		// If this is the last screenshot, don't take another one
+		if (request.nextDirection === "end") return;
+
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 			const currentTabId = tabs[0].id;
 			chrome.tabs.sendMessage(currentTabId, { msg: `screenshot_content_${request.nextDirection}`, tab: tabs[0] });

@@ -9,6 +9,13 @@ function addLoadingSpinner() {
 	dashboard.appendChild(image);
 }
 
+function addModelResult(result) {
+	dashboard.innerHTML = "";
+	const modelResult = document.createElement("p");
+	modelResult.innerText = result.toString();
+	dashboard.appendChild(modelResult);
+}
+
 function removeLoadingSpinner() {
 	dashboard.innerHTML = "<p>Done!</p>";
 }
@@ -25,5 +32,8 @@ chrome.runtime.onMessage.addListener(async (request) => {
 	if (request.msg == "screenshot_end") {
 		const tab = await chrome.tabs.query({ active: true, currentWindow: true });
 		removeLoadingSpinner();
+	} else if (request.msg == "image_evaluated") {
+		console.log("Evaluated image:", request.result);
+		addModelResult(request.result);
 	}
 });

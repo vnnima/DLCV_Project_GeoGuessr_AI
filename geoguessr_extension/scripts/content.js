@@ -50,10 +50,5 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			await sleep(3000);
 			chrome.runtime.sendMessage({ msg: "screenshot", direction: "left", nextDirection: "end" });
 			break;
-		case "screenshot_content_end":
-			console.log("screenshot_content_end");
-			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
-			chrome.runtime.sendMessage({ msg: "screenshot_end" });
-			break;
 	}
 });
