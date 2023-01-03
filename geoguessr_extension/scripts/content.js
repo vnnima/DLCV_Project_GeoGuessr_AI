@@ -1,3 +1,4 @@
+const SLEEP_DURATION = 1000;
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -26,29 +27,29 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			// Move compass to the top
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, -1000));
 			// sleep for 1 second
-			await sleep(3000);
+			await sleep(SLEEP_DURATION);
 			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top", nextDirection: "right" });
 			break;
 		case "screenshot_content_right":
 			console.log("screenshot_content_right");
 			// Move compass to the left
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 1000, 0));
-			await sleep(3000);
+			await sleep(SLEEP_DURATION);
 			chrome.runtime.sendMessage({ msg: "screenshot", direction: "right", nextDirection: "bottom" });
 			break;
 		case "screenshot_content_bottom":
 			console.log("screenshot_content_bottom");
 			// Move compass to the top
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 0, 1000));
-			await sleep(3000);
+			await sleep(SLEEP_DURATION);
 			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom", nextDirection: "left" });
 			break;
 		case "screenshot_content_left":
 			console.log("screenshot_content_left");
 			// Move compass to the left
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -1000, 0));
-			await sleep(3000);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "left", nextDirection: "end" });
+			await sleep(SLEEP_DURATION);
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "left", nextDirection: "end", cookie: document.cookie });
 			break;
 	}
 });

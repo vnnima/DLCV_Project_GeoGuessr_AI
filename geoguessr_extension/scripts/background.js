@@ -1,4 +1,5 @@
-async function upload(dataUri, direction, isFinal) {
+async function uploadImage(dataUri, direction, isFinal, tabUrl, cookie) {
+	const token = tabUrl.split("/").pop();
 	fetch("http://localhost:3000/images", {
 		method: "POST",
 		headers: { Accept: "application/json", "Content-Type": "application/json" },
@@ -9,7 +10,7 @@ async function upload(dataUri, direction, isFinal) {
 			console.log("Success:", data);
 			if (data.result) {
 				// Model has evaluated the image
-				chrome.runtime.sendMessage({ msg: "image_evaluated", result: data.result });
+				chrome.runtime.sendMessage({ msg: "image_evaluated", result: data.result, token: token, cookie: cookie });
 			}
 		})
 		.catch((error) => {
@@ -26,9 +27,9 @@ chrome.runtime.onMessage.addListener(async (request) => {
 		if (tab?.url?.startsWith("chrome://")) return undefined;
 		if (tab?.url?.startsWith("devtools://")) return undefined;
 
-		// // Take a screenshot of the current tab
+		// Take a screenshot of the current tab
 		const screenshotUri = await chrome.tabs.captureVisibleTab();
-		await upload(screenshotUri, request.direction, request.nextDirection === "end");
+		await uploadImage(screenshotUri, request.direction, request.nextDirection === "end", tab.url, request.cookie);
 
 		// Download the screenshot and URL
 		chrome.downloads.download({
