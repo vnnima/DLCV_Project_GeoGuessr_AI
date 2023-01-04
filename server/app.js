@@ -5,6 +5,8 @@ const path = require("path");
 const { spawn } = require("child_process");
 const axios = require("axios");
 
+require("dotenv").config();
+
 // Create the Express app
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -27,17 +29,20 @@ function callPythonScript(res) {
 }
 
 app.get("/", (req, res) => {
-	axios({
-		method: "post",
-		withCredentials: true,
-		url: "https://www.geoguessr.com/api/v3/games/GWk670jZno6e6Bv6",
-		data: { token: "GWk670jZno6e6Bv6", lat: 50.12345, lng: 20.12345, timedOut: false },
-		headers: {
-			"Content-Type": "application/json",
-			"Cookies": "_ncfa=8ZAYivsh54qo%2Byc5tkA9%2FPqiIOnfEzznl9A%2FxxuUuqE%3DFt4pdMlQtQlmVaLlvo%2BuZVSZZsGE%2FLXfXpe1l%2FjpgK2PNEEGzjZ9UBjetRXPzGvQ; devicetoken=35F011162F;",
-		},
-	}).then((res) => console.log(res));
-	res.send("HI");
+	const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
+	let dataToSend, errorToSend;
+	python.stdout.on("data", function (data) {
+		dataToSend = data.toString();
+	});
+	python.stderr.on("data", (data) => {
+		errorToSend = data.toString();
+	});
+
+	python.on("close", (code) => {
+		console.log(`child process close all stdio with code ${code}`);
+		console.log(dataToSend);
+		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend, error: errorToSend });
+	});
 });
 
 // Create an endpoint to receive the image data
