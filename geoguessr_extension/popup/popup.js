@@ -11,7 +11,7 @@ function addLoadingSpinner() {
 }
 
 function addModelResult(result) {
-	const { geohash_alt, lat_alt, lon_alt } = JSON.parse(result);
+	const { geohash, lat, lon } = JSON.parse(result);
 	// {"geo-code": "713", "geohash_alt": "62s", "lat_alt": "-41.0", "lon_alt": "-72.0"}
 	// dashboard.innerHTML = `<p>Model result:</p>
 	// <p>Geohash: ${geohash_alt}</p>

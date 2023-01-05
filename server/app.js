@@ -3,7 +3,6 @@ const cors = require("cors");
 const ImageDataURI = require("image-data-uri");
 const path = require("path");
 const { spawn } = require("child_process");
-const axios = require("axios");
 
 require("dotenv").config();
 
@@ -38,7 +37,6 @@ app.get("/", (req, res) => {
 	// python.stderr.on("data", (data) => {
 	// 	errorToSend = data.toString();
 	// });
-
 	// python.on("close", (code) => {
 	// 	console.log(`child process close all stdio with code ${code}`);
 	// 	console.log(dataToSend);
