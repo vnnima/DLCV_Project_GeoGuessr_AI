@@ -11,6 +11,12 @@ function addLoadingSpinner() {
 }
 
 function addModelResult(result) {
+	const { geohash_alt, lat_alt, lon_alt } = JSON.parse(result);
+	// {"geo-code": "713", "geohash_alt": "62s", "lat_alt": "-41.0", "lon_alt": "-72.0"}
+	// dashboard.innerHTML = `<p>Model result:</p>
+	// <p>Geohash: ${geohash_alt}</p>
+	// <p>Latitude: ${lat_alt}</p>
+	// <p>Longitude: ${lon_alt}</p> `
 	dashboard.innerHTML = "";
 	const modelResult = document.createElement("p");
 	modelResult.innerText = result.toString();
@@ -53,6 +59,7 @@ function addSubmitButton(token, cookie) {
 					.then((res) => res.json())
 					.then((data) => {
 						console.log(data);
+						dashboard.innerHTML = "";
 						const roundNumber = data.round;
 						const { lat: solutionLat, lng: solutionLng } = data.rounds[roundNumber - 1];
 						const roundScore = data.player.guesses[roundNumber - 2].roundScore.amount;

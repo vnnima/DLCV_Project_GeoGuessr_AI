@@ -15,7 +15,8 @@ app.use(cors());
 
 function callPythonScript(res) {
 	let dataToSend;
-	const python = spawn("python", ["python/script.py"]);
+	// const python = spawn("python", ["python/script.py"]);
+	const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
 
 	python.stdout.on("data", function (data) {
 		dataToSend = data.toString();
@@ -29,20 +30,20 @@ function callPythonScript(res) {
 }
 
 app.get("/", (req, res) => {
-	const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
-	let dataToSend, errorToSend;
-	python.stdout.on("data", function (data) {
-		dataToSend = data.toString();
-	});
-	python.stderr.on("data", (data) => {
-		errorToSend = data.toString();
-	});
+	// const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
+	// let dataToSend, errorToSend;
+	// python.stdout.on("data", function (data) {
+	// 	dataToSend = data.toString();
+	// });
+	// python.stderr.on("data", (data) => {
+	// 	errorToSend = data.toString();
+	// });
 
-	python.on("close", (code) => {
-		console.log(`child process close all stdio with code ${code}`);
-		console.log(dataToSend);
-		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend, error: errorToSend });
-	});
+	// python.on("close", (code) => {
+	// 	console.log(`child process close all stdio with code ${code}`);
+	// 	console.log(dataToSend);
+	// 	res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend, error: errorToSend });
+	// });
 });
 
 // Create an endpoint to receive the image data

@@ -1,29 +1,43 @@
-from PIL import Image
 import numpy as np
-import torch
-import torch.nn as nn
 import pandas as pd
-import base64
 import pygeohash as pgh
-import os
+
+# Deep Learning
+from PIL import Image
+import torch.nn as nn
+import torch
 from torchvision import models, transforms, datasets
 import torchvision
 
-# def decimal_to_base32(decimal):
-#     base32_digits = "0123456789abcdefghijklmnopqrstuvwxyz"
-#     base32 = ""
-#     while decimal > 0:
-#         base32 = base32_digits[decimal % 32] + base32
-#         decimal //= 32
-#     return base32
+# Utils
+import logging
+import os
+import json
 
-# def geohash_to_decimal(geohash):
-#     base_32 = '0123456789bcdefghjkmnpqrstuvwxyz';
-#     geohash = geohash.lower()
-#     return sum([32**idx * base_32.index(char) for idx, char in enumerate(geohash[::-1])])
+logging.basicConfig(filename='logging.log', filemode='a', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 HEIGHT = 512
 WIDTH = 2560
+
+def decimal_to_base32(decimal):
+    base32_digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    base32 = ""
+    while decimal > 0:
+        base32 = base32_digits[decimal % 32] + base32
+        decimal //= 32
+    return base32
+
+
+def decimal_to_base32_alt(decimal):
+    base32_digits = '0123456789bcdefghjkmnpqrstuvwxyz';
+    base32 = ""
+    while decimal > 0:
+        base32 = base32_digits[decimal % 32] + base32
+        decimal //= 32
+    return base32
+
+
 
 
 os.chdir(r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server")
@@ -39,10 +53,8 @@ geo_code_to_geohash = dict(zip(df_geo["geo_code"], df_geo["geohash_decimal"]))
 image_paths = os.listdir("images")
 
 image_directions = [image_path.split("_")[1].split(".")[0] for image_path in image_paths]
-print(image_directions)
 
 images = dict(zip(image_directions, image_paths))
-print(images)
 
 pil_images = []
 
@@ -51,7 +63,6 @@ for direction in ["top", "right", "bottom", "left"]:
 
 
 widths, heights = zip(*(i.size for i in pil_images))
-print(widths, heights)
 
 total_width = sum(widths)
 max_height = max(heights)
@@ -97,18 +108,26 @@ with torch.inference_mode():
     # TODO: Why does the output tensor have 2 dimensions and why do we have to unsqueeze(0) add one dimension?
     output = model(image_transformed.unsqueeze(0))[0]
 
-    print(output.shape)
     # Return the top 5 predictions
     # indices_sorted =output[np.argsort(-output[0])]
     # top5 = indices_sorted[:5]
     # print("Top 5 predictions:", top5)
 
     index = output.data.cpu().numpy().argmax()
-    print("Geo-Code Prediction:", index)
-    print("Geohash Prediction:", geo_code_to_geohash[index])
     geohash_decimal = geo_code_to_geohash[index]
-    print("Geohash Prediction:", decimal_to_base32(geohash_decimal))
-    print("Latitude, Longitude", pgh.decode("cn1"))
+    geohash = "1" #decimal_to_base32(geohash_decimal)
+    geohash_alt = decimal_to_base32_alt(geohash_decimal)
+    logging.info(f"Geo-Code Prediction: {index}")
+    logging.info(f"Geohash Decimal Prediction: { geohash_decimal }")
+    logging.info(f"Geohash Code Prediction: { geohash }")
+    logging.info(f"ALT: Geohash Code Prediction: { geohash_alt }")
+    logging.info(f"Latitude, Longitude {pgh.decode(geohash)}")
+    logging.info(f"ALT: Latitude, Longitude {pgh.decode(geohash_alt)}")
+
+    # result = {"geo-code": index, "geohash": geohash, "geohash_alt": geohash_alt, "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1], "lat_alt": pgh.decode(geohash_alt)[0], "lon_alt": pgh.decode(geohash_alt)[1]}
+    result_alt = {"geo-code": index, "geohash_alt": geohash_alt, "lat_alt": pgh.decode(geohash_alt)[0], "lon_alt": pgh.decode(geohash_alt)[1]}
+    result = {key: str(value) for key, value in result_alt.items()}
+    print(json.dumps(result))
 
 
 
