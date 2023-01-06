@@ -1,9 +1,9 @@
 import numpy as np
-import pandas as pd
 import pygeohash as pgh
+from utils.geohash_conversion import decimal_to_geohash, create_geocode_mapping
+from utils.load_image import create_combined_image
 
 # Deep Learning
-from PIL import Image
 import torch.nn as nn
 import torch
 from torchvision import models, transforms, datasets
@@ -12,63 +12,17 @@ from torchvision import models, transforms, datasets
 import logging
 import os
 import json
+from config import Config
 
-logging.basicConfig(filename='logging.log', filemode='a', level=logging.INFO,
+logging.basicConfig(filename='python/logging.log', filemode='a', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-# Each image will be cropped to these dimensions
-HEIGHT = 1000
-WIDTH = 1760
+os.chdir(Config.CWD)
 
-def decimal_to_geohash(decimal):
-    base32_digits = '0123456789bcdefghjkmnpqrstuvwxyz';
-    base32 = ""
-    while decimal > 0:
-        base32 = base32_digits[decimal % 32] + base32
-        decimal //= 32
-    return base32
+geo_code_to_geohash = create_geocode_mapping(Config.CSV_PATH)
 
-
-
-
-os.chdir(r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server")
-
-# Create a dictionary with the geo_code as key and the geohash (decimal) as value
-df = pd.read_csv("python/coordinates2.csv")
-df_geo = df[["geohash_decimal", "geo_code"]]
-df_geo = df_geo.drop_duplicates()
-geo_code_to_geohash = dict(zip(df_geo["geo_code"], df_geo["geohash_decimal"]))
-
-# Get images in images folder
-image_paths = os.listdir("images")
-image_directions = [image_path.replace("image_", "").split(".")[0] for image_path in image_paths]
-images = dict(zip(image_directions, image_paths))
-
-pil_images = []
-for direction in ["top", "top_right", "bottom_right", "bottom_left", "top_left"]:
-    pil_images.append(Image.open("images/" + images[direction]))
-
-
-
-# Crop the images and then paste them together
-new_im = Image.new('RGB', (WIDTH * 5, HEIGHT))
-
-x_offset = 0
-for im in pil_images:
-    width, height = im.size  
-    # Crop the image at the center
-    left = (width - WIDTH)/2
-    top = (height - HEIGHT)/2
-    right = (width + WIDTH)/2
-    bottom = (height + HEIGHT)/2
-
-    # Paste the cropped image into the new image
-    im = im.crop((left, top, right, bottom))
-
-    new_im.paste(im, (x_offset, 0))
-    x_offset += im.size[0]
-
+new_im = create_combined_image("images")
 
 new_im.save('images/combined_image.jpg')
 
@@ -76,16 +30,16 @@ new_im.save('images/combined_image.jpg')
 # Load the model
 model = models.resnet50()
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 3139)
+model.fc = nn.Linear(num_ftrs, Config.NUM_CLASSES)
 
-path = r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server\python\pretrainedresnet50_14epoch.tar"
-checkpoint = torch.load(path, map_location=torch.device('cpu'))
+checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, "pretrainedresnet50_14epoch.tar"), map_location=torch.device('cpu'))
 model.load_state_dict(checkpoint['model_state_dict'])
+
 # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 # epoch = checkpoint['epoch']
 # loss = checkpoint['loss']
 
-transform = transforms.Compose([transforms.ToTensor(),  # convert images to tensors
+transform = transforms.Compose([transforms.ToTensor(),  
                                 # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),  # normalize images
                                 transforms.Resize((512, 2560))
                                 ])
@@ -94,7 +48,7 @@ image_transformed = transform(new_im)
 
 with torch.inference_mode():
     # TODO: Why does the output tensor have 2 dimensions and why do we have to unsqueeze(0) add one dimension?
-    # Probably because the model expects a batch of images, which adds an additional dimension
+    # Probably because the model expects a batch of images, which adds an additional dimension?
     output = model(image_transformed.unsqueeze(0))[0]
 
     # Return the top 5 predictions
