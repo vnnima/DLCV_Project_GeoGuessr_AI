@@ -52,7 +52,7 @@ for direction in ["top", "top_right", "bottom_right", "bottom_left", "top_left"]
 
 
 # Crop the images and then paste them together
-new_im = Image.new('RGB', (WIDTH * 4, HEIGHT))
+new_im = Image.new('RGB', (WIDTH * 5, HEIGHT))
 
 x_offset = 0
 for im in pil_images:
@@ -87,7 +87,7 @@ model.load_state_dict(checkpoint['model_state_dict'])
 
 transform = transforms.Compose([transforms.ToTensor(),  # convert images to tensors
                                 # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),  # normalize images
-                                # transforms.Resize((250, 1000))
+                                transforms.Resize((512, 2560))
                                 ])
 
 image_transformed = transform(new_im)
