@@ -23,16 +23,16 @@ def create_combined_image(path):
 
 
     # Crop the images and then paste them together
-    new_im = Image.new('RGB', (Config.WIDTH * 5, Config.HEIGHT))
+    new_im = Image.new('RGB', (Config.CROPPED_WIDTH * 5, Config.CROPPED_HEIGHT))
 
     x_offset = 0
     for im in pil_images:
         width, height = im.size  
         # Crop the image at the center
-        left = (width - Config.WIDTH)/2
-        top = (height - Config.HEIGHT)/2
-        right = (width + Config.WIDTH)/2
-        bottom = (height + Config.HEIGHT)/2
+        left = (width - Config.CROPPED_WIDTH)/2
+        top = (height - Config.CROPPED_HEIGHT)/2
+        right = (width + Config.CROPPED_WIDTH)/2
+        bottom = (height + Config.CROPPED_HEIGHT)/2
 
         # Paste the cropped image into the new image
         im = im.crop((left, top, right, bottom))
@@ -40,9 +40,9 @@ def create_combined_image(path):
         new_im.paste(im, (x_offset, 0))
         x_offset += im.size[0]  
 
-    
+
+    new_im = new_im.resize((Config.WIDTH, Config.HEIGHT), Image.ANTIALIAS)
     return new_im
-# Each image will be cropped to these dimensions
 
 
 

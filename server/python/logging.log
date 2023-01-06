@@ -1,14 +1,16 @@
-2023-01-05 11:54:09,512 - INFO - Geo-Code Prediction: 713
-2023-01-05 11:54:09,512 - INFO - Geohash Decimal Prediction: 6232
-2023-01-05 11:54:09,512 - INFO - Geohash Code Prediction: 62o
-2023-01-05 11:54:09,512 - INFO - ALT: Geohash Code Prediction: 62s
-2023-01-05 11:56:19,416 - INFO - Geo-Code Prediction: 713
-2023-01-05 11:56:19,416 - INFO - Geohash Decimal Prediction: 6232
-2023-01-05 11:56:19,416 - INFO - Geohash Code Prediction: 1
-2023-01-05 11:56:19,416 - INFO - ALT: Geohash Code Prediction: 62s
-2023-01-05 11:57:07,205 - INFO - Geo-Code Prediction: 713
-2023-01-05 11:57:07,205 - INFO - Geohash Decimal Prediction: 6232
-2023-01-05 11:57:07,205 - INFO - Geohash Code Prediction: 1
-2023-01-05 11:57:07,205 - INFO - ALT: Geohash Code Prediction: 62s
-2023-01-05 11:57:07,205 - INFO - Latitude, Longitude (-68.0, -112.0)
-2023-01-05 11:57:07,205 - INFO - ALT: Latitude, Longitude (-41.0, -72.0)
+2023-01-06 13:53:53,712 - INFO - Geo-Code Prediction: 1831
+2023-01-06 13:53:53,712 - INFO - Geohash Decimal Prediction: 25320
+2023-01-06 13:53:53,712 - INFO - Geohash Code Prediction: sr8
+2023-01-06 13:53:53,713 - INFO - Latitude, Longitude (43.0, 12.0)
+2023-01-06 14:04:01,201 - INFO - Geo-Code Prediction: 1831
+2023-01-06 14:04:01,201 - INFO - Geohash Decimal Prediction: 25320
+2023-01-06 14:04:01,201 - INFO - Geohash Code Prediction: sr8
+2023-01-06 14:04:01,201 - INFO - Latitude, Longitude (43.0, 12.0)
+2023-01-06 14:06:29,645 - INFO - Geo-Code Prediction: 1831
+2023-01-06 14:06:29,645 - INFO - Geohash Decimal Prediction: 25320
+2023-01-06 14:06:29,645 - INFO - Geohash Code Prediction: sr8
+2023-01-06 14:06:29,645 - INFO - Latitude, Longitude (43.0, 12.0)
+2023-01-06 14:09:01,526 - INFO - Geo-Code Prediction: 1831
+2023-01-06 14:09:01,527 - INFO - Geohash Decimal Prediction: 25320
+2023-01-06 14:09:01,527 - INFO - Geohash Code Prediction: sr8
+2023-01-06 14:09:01,527 - INFO - Latitude, Longitude (43.0, 12.0)

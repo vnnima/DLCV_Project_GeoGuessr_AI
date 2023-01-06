@@ -6,7 +6,7 @@ from utils.load_image import create_combined_image
 # Deep Learning
 import torch.nn as nn
 import torch
-from torchvision import models, transforms, datasets
+from torchvision import models, transforms
 
 # Utils
 import logging
@@ -41,7 +41,6 @@ model.load_state_dict(checkpoint['model_state_dict'])
 
 transform = transforms.Compose([transforms.ToTensor(),  
                                 # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),  # normalize images
-                                transforms.Resize((512, 2560))
                                 ])
 
 image_transformed = transform(new_im)
