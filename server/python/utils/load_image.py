@@ -1,5 +1,9 @@
 import os
+import sys
 from PIL import Image
+
+# Add the parent directory to the Python search path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import Config
 
 def create_combined_image(path):
@@ -45,4 +49,7 @@ def create_combined_image(path):
     return new_im
 
 
-
+if __name__ == "__main__":
+    name = sys.argv[1] + ".jpg"
+    print()
+    create_combined_image(Config.IMAGES_PATH).save(Config.DATASET_PATH + name)
