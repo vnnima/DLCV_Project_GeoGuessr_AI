@@ -62,11 +62,11 @@ class Solver:
 
         # Define default values for parameters.
         defaults = {
-            'loss': HaversineLoss(),
+            'loss': 'CrossEntropyLoss',
             'loss_config': {},
             'optimizer': 'SGD',
             'optimizer_params': {'lr': 1e-2},
-            'batch_size': 2,
+            'batch_size': 64,
             'num_train_samples': 1000,
             'num_val_samples': None,
             'scheduler': None,
@@ -177,12 +177,15 @@ class Solver:
         if num_samples is not None and num_samples < dataset_size:
             dataset, _ =torch.utils.data.random_split(dataset, [num_samples,dataset_size - num_samples])
         #use data loader as in the example provided above
+        print("test, we are stuck")
         dataloader = torch.utils.data.DataLoader(
             dataset,
             batch_size=self.batch_size,
-            shuffle=False
+            shuffle=False,
+            num_workers=0,
+            pin_memory=True
         )
-        
+        print("test, we are not stuck!")
         total = 0
         correct = 0
         #dont calculate gradients
@@ -233,70 +236,75 @@ class Solver:
         ############################################################
         
         #dataloader as in example
+        print("train, we are stuck")
         dataloader = torch.utils.data.DataLoader(
             self.data_train,
             batch_size=self.batch_size,
-            shuffle=True
+            shuffle=True,
+            num_workers=0,
+            pin_memory=True          
         )
+        print("train, we are not stuck!")
         #init best accuracy
         best_val_acc = 0
         best_params = None
         #show training progress
-        """for epoch in (pbar := tnrange(num_epochs)): 
+        for epoch in (pbar := tnrange(num_epochs)): 
             self.epoch += 1
             #for gpu?
             #loss_history = torch.empty(len(dataloader))
-            loss_history = []"""
-        loss_history = []           
-            #self.model.train()
-        for i, müll in enumerate(dataloader):
-            torch.cuda.empty_cache()
-            inputs = müll['image'].to(self.device)
-            labels = müll['cluster'].long().to(self.device)
+            loss_history = []
+               
+            self.model.train()
+            print('oh sole mio')
+            for i, müll in enumerate(dataloader):
+                print(i)
+                inputs = müll['image'].to(self.device)
+                labels = müll['cluster'].long().to(self.device)
 
-                #forward pass
-            outputs = self.model(inputs)
+                    #forward pass
+                outputs = self.model(inputs)
 
-                #loss and gradient computation
-            loss = self.loss(outputs, labels)
-            loss.backward()
+                    #loss and gradient computation
+                loss = self.loss(outputs, labels)
+                loss.backward()
+
+                    #update parameters 
+                self.optimizer.step()
+                self.optimizer.zero_grad()
+
+
+                    #store loss history
+                loss_history.append(loss.item())
                 
-                #update parameters 
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-                
-            
-                #store loss history
-            loss_history.append(loss.item())
-            torch.cuda.empty_cache()
-            
 
-        self.loss_history.append(sum(loss_history)/i)
 
-            #see training accuracy and store it
-        train_acc =self.test(self.data_train, num_samples=self.num_train_samples)
-        self.train_acc.append(train_acc)
-            #see validation accuracy and store it
-        val_acc =self.test(self.data_val, num_samples=self.num_val_samples)
-        self.val_acc.append(val_acc)
-            
-            #apply scheduler if given
-        if self.scheduler is not None:
-            self.scheduler.step()
-        
-        #track loss history per epoch
-        train_loss = torch.mean(loss_history).item()
-        self.loss_history.append(train_loss)
-            
-            #safe the model if it is better than previous one
-        if val_acc>best_val_acc:
-            best_val_acc = val_acc
-            self.save("./models/bestmodel")
-        #pbar.set_description(f'Validation accuracy: {val_acc:5.2f}%')
-    
-        #initalize best model
-        
-        self.load("./models/bestmodel")
+            self.loss_history.append(sum(loss_history)/i)
+
+                #see training accuracy and store it
+            train_acc =self.test(self.data_train, num_samples=self.num_train_samples)
+            self.train_acc.append(train_acc)
+                #see validation accuracy and store it
+            val_acc =self.test(self.data_val, num_samples=self.num_val_samples)
+            self.val_acc.append(val_acc)
+
+                #apply scheduler if given
+            if self.scheduler is not None:
+                self.scheduler.step()
+
+            #track loss history per epoch
+            train_loss = torch.mean(loss_history).item()
+            self.loss_history.append(train_loss)
+
+                #safe the model if it is better than previous one
+            if val_acc>best_val_acc:
+                best_val_acc = val_acc
+                self.save(r"C:\Users\Shadow\Documents\DLCV_Project_GeoGuessr_AI-Basti\models\bestmodel")
+            pbar.set_description(f'Validation accuracy: {val_acc:5.2f}%')
+
+            #initalize best model
+
+            self.load(r"C:\Users\Shadow\Documents\DLCV_Project_GeoGuessr_AI-Basti\models\bestmodel")
                
                            
 
