@@ -282,7 +282,7 @@ class TraversedNet(nn.Module):
         #params=2432*10+10=24330
         self.fc1 = nn.Linear(40960, 512)
         self.fc2 = nn.Linear(512, 512)
-        self.fc3 = nn.Linear(512, 32768)
+        self.fc3 = nn.Linear(512, 3139)
         ############################################################
         ###                   END OF YOUR CODE                   ###
         ############################################################
