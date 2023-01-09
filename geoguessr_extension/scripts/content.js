@@ -63,35 +63,47 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
 			// sleep for 1 second
 			await sleep(SLEEP_DURATION);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top", nextDirection: "top_right" });
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top", nextDirection: "top_right", mode: request.mode });
 			break;
 		case "screenshot_content_top_right":
 			// Move compass to the left
-			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 75, 0));
+			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 75, -5));
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
 			await sleep(SLEEP_DURATION);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top_right", nextDirection: "bottom_right" });
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top_right", nextDirection: "bottom_right", mode: request.mode });
 			break;
 		case "screenshot_content_bottom_right":
 			// Move compass to the top
-			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 60, 100));
+			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, 55, 85));
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
 			await sleep(SLEEP_DURATION);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom_right", nextDirection: "bottom_left" });
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom_right", nextDirection: "bottom_left", mode: request.mode });
 			break;
 		case "screenshot_content_bottom_left":
 			// Move compass to the left
-			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -45, 100));
+			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -40, 100));
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
 			await sleep(SLEEP_DURATION);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom_left", nextDirection: "top_left", cookie: document.cookie });
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "bottom_left", nextDirection: "top_left", mode: request.mode });
 			break;
 		case "screenshot_content_top_left":
 			// Move compass to the left
-			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -75, 0));
+			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -80, -23));
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
+			console.log(document.cookie);
 			await sleep(SLEEP_DURATION);
-			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top_left", nextDirection: "end", cookie: document.cookie });
+			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top_left", nextDirection: "end", cookie: document.cookie, mode: request.mode });
+			break;
+		case "reload_page":
+			location.reload();
+			chrome.runtime.sendMessage({ msg: "collect_images" });
+			break;
+		case "start_new_game":
+			location.reload();
+			await sleep(SLEEP_DURATION);
+			const startGameButton = document.querySelector("[data-qa='start-game-button']");
+			startGameButton.click();
+			chrome.runtime.sendMessage({ msg: "collect_images" });
 			break;
 	}
 });

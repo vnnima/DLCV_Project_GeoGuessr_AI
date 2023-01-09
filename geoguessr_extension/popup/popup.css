@@ -21,7 +21,8 @@ header {
 }
 
 .dashboard {
-	height: 100px;
+	margin: 1em 0;
+	min-height: 100px;
 	font-size: 1.05rem;
 	display: flex;
 	flex-direction: column;
