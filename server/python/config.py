@@ -9,3 +9,4 @@ class Config:
     CSV_PATH = r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server\python\utils\coordinates2.csv"
     DATASET_PATH = r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server\python\dataset"
     IMAGES_PATH = r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\server\images"
+    PREDICTION_PLOT_PATH = r"C:\Users\valdr\OneDrive\Vali Studium\Deep_Learning_for_Computer_Vision\Project\DLCV_Project_GeoGuessr_AI\geoguessr_extension\assets\prediction_plot"

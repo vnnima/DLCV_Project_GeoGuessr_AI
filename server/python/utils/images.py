@@ -2,9 +2,47 @@ import os
 import sys
 from PIL import Image
 
+from shapely.geometry import Point
+import geopandas as gpd
+from geopandas import GeoDataFrame
+import matplotlib.pyplot as plt
+import pandas as pd
+
 # Add the parent directory to the Python search path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import Config
+
+
+def create_map_plot(coords):
+    """Create a map plot with the given coordinates.
+    
+    Args:
+        coords (list): List of tuples with coordinates: (latitude, longitude)
+    Returns:
+        None
+    """
+
+    df = pd.DataFrame(coords, columns=['lat', 'lng'])
+    geometry = [Point(lng, lat) for lat, lng in coords]
+    gdf = GeoDataFrame(df, geometry=geometry)   
+    # Set x-axis limits.
+
+
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    ax = world.plot()
+    gdf.plot(ax=ax, marker='o', color='red', markersize=15);
+
+    minx = min([point.x for point in geometry])
+    miny = min([point.y for point in geometry])
+    maxx = max([point.x for point in geometry])
+    maxy = max([point.y for point in geometry])
+
+    ax.set_xlim(minx - 10, maxx + 10)
+    ax.set_ylim(miny - 10, maxy + 10)
+
+    plt.gca().set_axis_off()
+    plt.savefig(os.path.join(Config.PREDICTION_PLOT_PATH, 'prediction.png'), bbox_inches="tight", pad_inches=0.0)
+
 
 def create_combined_image(path):
     """Create a combined image from the images in the given path. Images are combined along the x-axis.
@@ -21,7 +59,7 @@ def create_combined_image(path):
     images = dict(zip(image_directions, image_paths))
 
     pil_images = []
-    for direction in ["top", "top_right", "bottom_right", "bottom_left", "top_left"]:
+    for direction in ["top","top_left", "bottom_left","bottom_right", "top_right"]:
         pil_images.append(Image.open("images/" + images[direction]))
 
 

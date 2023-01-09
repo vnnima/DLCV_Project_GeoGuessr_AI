@@ -1,7 +1,10 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 import pygeohash as pgh
 from utils.geohash_conversion import decimal_to_geohash, create_geocode_mapping
-from utils.load_image import create_combined_image
+from utils.images import create_combined_image, create_map_plot
+
 
 # Deep Learning
 import torch.nn as nn
@@ -52,10 +55,14 @@ with torch.inference_mode():
     output = model(image_transformed.unsqueeze(0))[0]
 
     # Return the top 5 predictions
-    # indices_sorted =output[np.argsort(-output[0])]
-    # top5 = indices_sorted[:5]
-    # print("Top 5 predictions:", top5)
+    indices_sorted =np.argsort(-output)
+    top5 = indices_sorted[:5]
+    top_5_coords = [pgh.decode(decimal_to_geohash(geo_code_to_geohash[int(index.data)])) for index in top5]
 
+    # logging.info("Top 5 coordinates", str(top_5_coords))
+
+
+    create_map_plot(top_5_coords)
     index = output.data.cpu().numpy().argmax()
     geohash_decimal = geo_code_to_geohash[index]
     geohash = decimal_to_geohash(geohash_decimal)
