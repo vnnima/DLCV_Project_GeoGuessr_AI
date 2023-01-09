@@ -51,5 +51,4 @@ def create_combined_image(path):
 
 if __name__ == "__main__":
     name = sys.argv[1] + ".jpg"
-    print()
-    create_combined_image(Config.IMAGES_PATH).save(Config.DATASET_PATH + name)
+    create_combined_image(Config.IMAGES_PATH).save(Config.DATASET_PATH + "\\" +name)
