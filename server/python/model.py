@@ -34,6 +34,7 @@ model.fc = nn.Linear(num_ftrs, Config.NUM_CLASSES)
 
 checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, "pretrainedresnet50_14epoch.tar"), map_location=torch.device('cpu'))
 model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
 
 # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 # epoch = checkpoint['epoch']
