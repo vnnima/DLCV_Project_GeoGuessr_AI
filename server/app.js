@@ -12,7 +12,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" })); // for form data
 app.use(cors());
 
-function callPythonScript(res) {
+function callModelScript(res) {
 	let dataToSend;
 	// const python = spawn("python", ["python/script.py"]);
 	const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
@@ -25,6 +25,23 @@ function callPythonScript(res) {
 		console.log(`child process close all stdio with code ${code}`);
 		console.log(dataToSend);
 		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend });
+	});
+}
+
+function callCreateDataScript(res, coords) {
+	const name = `img_${coords.join(",")}`;
+	const python = spawn(process.env.PYTHON_PATH, [`python/utils/load_image.py`, name]);
+
+	let data;
+
+	python.stdout.on("data", function (data) {
+		data = data.toString();
+	});
+
+	python.stderr.on("data", function (data) {});
+	python.on("close", (code) => {
+		console.log(`child process close all stdio with code ${code}`);
+		res.json({ name: "SUCCESS: Image (sample) evaluated.", result: "IMAGE CREATED" });
 	});
 }
 
@@ -44,18 +61,23 @@ app.get("/", (req, res) => {
 	// });
 });
 
-// Create an endpoint to receive the image data
-app.post("/images", async (req, res) => {
-	const { image: dataUri, direction, isFinal } = req.body;
+app.post("/create-image", (req, res) => {
+	callCreateDataScript(res, req.body.coords);
+	return;
+});
+
+app.get("/evaluate-image", (req, res) => {
+	callModelScript(res);
+	return;
+});
+
+app.post("/save-image", async (req, res) => {
+	const { image: dataUri, direction } = req.body;
 
 	const filePath = path.join(__dirname, "images", `image_${direction}.png`);
 
 	ImageDataURI.outputFile(dataUri, filePath);
 
-	if (isFinal) {
-		callPythonScript(res);
-		return;
-	}
 	res.json({ name: "SUCCESS: Image received." });
 });
 
