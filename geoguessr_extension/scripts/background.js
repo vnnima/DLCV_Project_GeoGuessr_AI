@@ -21,7 +21,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
 		const tabUrl = tab.url;
 		const token = tabUrl.split("/").pop();
 		const cookie = request.cookie;
-		console.log(cookie);
 
 		if (tab?.url?.startsWith("chrome://")) return undefined;
 		if (tab?.url?.startsWith("devtools://")) return undefined;

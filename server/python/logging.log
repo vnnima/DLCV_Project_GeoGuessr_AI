@@ -422,3 +422,163 @@
 2023-01-09 15:26:47,782 - INFO - Geohash Decimal Prediction: 12934
 2023-01-09 15:26:47,782 - INFO - Geohash Code Prediction: dn6
 2023-01-09 15:26:47,782 - INFO - Latitude, Longitude (36.0, -86.0)
+2023-01-09 19:29:51,986 - INFO - Geo-Code Prediction: 1326
+2023-01-09 19:29:52,001 - INFO - Geohash Decimal Prediction: 26424
+2023-01-09 19:29:52,001 - INFO - Geohash Code Prediction: tts
+2023-01-09 19:29:52,001 - INFO - Latitude, Longitude (32.0, 74.0)
+2023-01-09 20:03:27,125 - INFO - Geo-Code Prediction: 1475
+2023-01-09 20:03:27,125 - INFO - Geohash Decimal Prediction: 9927
+2023-01-09 20:03:27,125 - INFO - Geohash Code Prediction: 9q7
+2023-01-09 20:03:27,125 - INFO - Latitude, Longitude (36.0, -119.0)
+2023-01-09 22:27:29,799 - INFO - Geo-Code Prediction: 1805
+2023-01-09 22:27:29,799 - INFO - Geohash Decimal Prediction: 25251
+2023-01-09 22:27:29,800 - INFO - Geohash Code Prediction: sp3
+2023-01-09 22:27:29,800 - INFO - Latitude, Longitude (41.0, 2.0)
+2023-01-09 22:27:56,500 - INFO - Geo-Code Prediction: 1805
+2023-01-09 22:27:56,500 - INFO - Geohash Decimal Prediction: 25251
+2023-01-09 22:27:56,500 - INFO - Geohash Code Prediction: sp3
+2023-01-09 22:27:56,500 - INFO - Latitude, Longitude (41.0, 2.0)
+2023-01-09 23:04:29,697 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:04:30,571 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:04:30,571 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:04:30,571 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:05:06,832 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:05:06,832 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:05:06,832 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:05:06,832 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:05:43,447 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:05:43,447 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:05:43,447 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:05:43,447 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:12:35,263 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:12:35,263 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:12:35,263 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:12:35,263 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:15:22,635 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:15:22,635 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:15:22,635 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:15:22,635 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:19:41,730 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:19:41,738 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:19:41,738 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:19:41,738 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:20:19,966 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:20:19,966 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:20:19,966 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:20:19,966 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:23:39,485 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:23:39,485 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:23:39,493 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:23:39,493 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:26:41,406 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:26:41,406 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:26:41,406 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:26:41,406 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:27:09,927 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:27:09,927 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:27:09,927 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:27:09,927 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:27:45,108 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:27:45,116 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:27:45,116 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:27:45,116 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:28:19,938 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:28:19,946 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:28:19,946 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:28:19,946 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:28:49,296 - INFO - Geo-Code Prediction: 2474
+2023-01-09 23:28:49,296 - INFO - Geohash Decimal Prediction: 15731
+2023-01-09 23:28:49,296 - INFO - Geohash Code Prediction: gcm
+2023-01-09 23:28:49,296 - INFO - Latitude, Longitude (53.0, -4.0)
+2023-01-09 23:29:16,024 - INFO - Geo-Code Prediction: 1045
+2023-01-09 23:29:16,032 - INFO - Geohash Decimal Prediction: 9699
+2023-01-09 23:29:16,032 - INFO - Geohash Code Prediction: 9g3
+2023-01-09 23:29:16,032 - INFO - Latitude, Longitude (19.0, -99.0)
+2023-01-09 23:29:33,649 - INFO - Geo-Code Prediction: 1045
+2023-01-09 23:29:33,649 - INFO - Geohash Decimal Prediction: 9699
+2023-01-09 23:29:33,649 - INFO - Geohash Code Prediction: 9g3
+2023-01-09 23:29:33,649 - INFO - Latitude, Longitude (19.0, -99.0)
+2023-01-09 23:29:57,612 - INFO - Geo-Code Prediction: 2185
+2023-01-09 23:29:57,612 - INFO - Geohash Decimal Prediction: 26701
+2023-01-09 23:29:57,620 - INFO - Geohash Code Prediction: u2e
+2023-01-09 23:29:57,620 - INFO - Latitude, Longitude (49.0, 16.0)
+2023-01-09 23:30:45,135 - INFO - Geo-Code Prediction: 2185
+2023-01-09 23:30:45,135 - INFO - Geohash Decimal Prediction: 26701
+2023-01-09 23:30:45,135 - INFO - Geohash Code Prediction: u2e
+2023-01-09 23:30:45,135 - INFO - Latitude, Longitude (49.0, 16.0)
+2023-01-09 23:31:22,141 - INFO - Geo-Code Prediction: 86
+2023-01-09 23:31:22,141 - INFO - Geohash Decimal Prediction: 6763
+2023-01-09 23:31:22,141 - INFO - Geohash Code Prediction: 6mc
+2023-01-09 23:31:22,141 - INFO - Latitude, Longitude (-12.0, -77.0)
+2023-01-09 23:33:26,802 - INFO - Geo-Code Prediction: 86
+2023-01-09 23:33:26,802 - INFO - Geohash Decimal Prediction: 6763
+2023-01-09 23:33:26,802 - INFO - Geohash Code Prediction: 6mc
+2023-01-09 23:33:26,802 - INFO - Latitude, Longitude (-12.0, -77.0)
+2023-01-09 23:34:51,508 - INFO - Geo-Code Prediction: 86
+2023-01-09 23:34:51,508 - INFO - Geohash Decimal Prediction: 6763
+2023-01-09 23:34:51,508 - INFO - Geohash Code Prediction: 6mc
+2023-01-09 23:34:51,508 - INFO - Latitude, Longitude (-12.0, -77.0)
+2023-01-09 23:36:02,810 - INFO - Geo-Code Prediction: 561
+2023-01-09 23:36:02,810 - INFO - Geohash Decimal Prediction: 23663
+2023-01-09 23:36:02,810 - INFO - Geohash Code Prediction: r3g
+2023-01-09 23:36:02,810 - INFO - Latitude, Longitude (-34.0, 151.0)
+2023-01-09 23:37:15,208 - INFO - Geo-Code Prediction: 561
+2023-01-09 23:37:15,208 - INFO - Geohash Decimal Prediction: 23663
+2023-01-09 23:37:15,208 - INFO - Geohash Code Prediction: r3g
+2023-01-09 23:37:15,208 - INFO - Latitude, Longitude (-34.0, 151.0)
+2023-01-09 23:37:44,405 - INFO - Geo-Code Prediction: 2325
+2023-01-09 23:37:44,412 - INFO - Geohash Decimal Prediction: 11598
+2023-01-09 23:37:44,414 - INFO - Geohash Code Prediction: cbf
+2023-01-09 23:37:44,414 - INFO - Latitude, Longitude (50.0, -98.0)
+2023-01-09 23:38:54,022 - INFO - Geo-Code Prediction: 1157
+2023-01-09 23:38:54,022 - INFO - Geohash Decimal Prediction: 26135
+2023-01-09 23:38:54,030 - INFO - Geohash Code Prediction: thr
+2023-01-09 23:38:54,030 - INFO - Latitude, Longitude (25.0, 56.0)
+2023-01-09 23:39:41,409 - INFO - Geo-Code Prediction: 1544
+2023-01-09 23:39:41,409 - INFO - Geohash Decimal Prediction: 29644
+2023-01-09 23:39:41,417 - INFO - Geohash Code Prediction: wyd
+2023-01-09 23:39:41,417 - INFO - Latitude, Longitude (37.0, 127.0)
+2023-01-10 11:58:46,088 - INFO - Geo-Code Prediction: 1924
+2023-01-10 11:58:46,090 - INFO - Geohash Decimal Prediction: 12991
+2023-01-10 11:58:46,090 - INFO - Geohash Code Prediction: dpz
+2023-01-10 11:58:46,091 - INFO - Latitude, Longitude (44.0, -79.0)
+2023-01-10 11:59:42,010 - INFO - Geo-Code Prediction: 1157
+2023-01-10 11:59:42,010 - INFO - Geohash Decimal Prediction: 26135
+2023-01-10 11:59:42,011 - INFO - Geohash Code Prediction: thr
+2023-01-10 11:59:42,011 - INFO - Latitude, Longitude (25.0, 56.0)
+2023-01-10 12:00:28,660 - INFO - Geo-Code Prediction: 1805
+2023-01-10 12:00:28,660 - INFO - Geohash Decimal Prediction: 25251
+2023-01-10 12:00:28,661 - INFO - Geohash Code Prediction: sp3
+2023-01-10 12:00:28,661 - INFO - Latitude, Longitude (41.0, 2.0)
+2023-01-10 12:01:12,254 - INFO - Geo-Code Prediction: 2122
+2023-01-10 12:01:12,254 - INFO - Geohash Decimal Prediction: 11330
+2023-01-10 12:01:12,254 - INFO - Geohash Code Prediction: c22
+2023-01-10 12:01:12,255 - INFO - Latitude, Longitude (47.0, -123.0)
+2023-01-14 16:48:35,283 - INFO - Geo-Code Prediction: 1182
+2023-01-14 16:48:35,286 - INFO - Geohash Decimal Prediction: 10056
+2023-01-14 16:48:35,286 - INFO - Geohash Code Prediction: 9u8
+2023-01-14 16:48:35,287 - INFO - Latitude, Longitude (26.0, -101.0)
+2023-01-14 16:49:45,423 - INFO - Geo-Code Prediction: 2705
+2023-01-14 16:49:45,424 - INFO - Geohash Decimal Prediction: 30766
+2023-01-14 16:49:45,424 - INFO - Geohash Code Prediction: y1f
+2023-01-14 16:49:45,424 - INFO - Latitude, Longitude (56.0, 94.0)
+2023-01-14 16:51:49,789 - INFO - Geo-Code Prediction: 2892
+2023-01-14 16:51:49,790 - INFO - Geohash Decimal Prediction: 10651
+2023-01-14 16:51:49,790 - INFO - Geohash Code Prediction: bdv
+2023-01-14 16:51:49,790 - INFO - Latitude, Longitude (61.0, -150.0)
+2023-01-14 17:19:38,103 - INFO - Geo-Code Prediction: 2892
+2023-01-14 17:19:38,104 - INFO - Geohash Decimal Prediction: 10651
+2023-01-14 17:19:38,104 - INFO - Geohash Code Prediction: bdv
+2023-01-14 17:19:38,104 - INFO - Latitude, Longitude (61.0, -150.0)
+2023-01-14 17:20:22,873 - INFO - Geo-Code Prediction: 2892
+2023-01-14 17:20:22,874 - INFO - Geohash Decimal Prediction: 10651
+2023-01-14 17:20:22,874 - INFO - Geohash Code Prediction: bdv
+2023-01-14 17:20:22,874 - INFO - Latitude, Longitude (61.0, -150.0)
+2023-01-14 17:20:41,737 - INFO - Geo-Code Prediction: 2892
+2023-01-14 17:20:41,737 - INFO - Geohash Decimal Prediction: 10651
+2023-01-14 17:20:41,737 - INFO - Geohash Code Prediction: bdv
+2023-01-14 17:20:41,737 - INFO - Latitude, Longitude (61.0, -150.0)
+2023-01-14 17:21:07,163 - INFO - Geo-Code Prediction: 2892
+2023-01-14 17:21:07,163 - INFO - Geohash Decimal Prediction: 10651
+2023-01-14 17:21:07,163 - INFO - Geohash Code Prediction: bdv
+2023-01-14 17:21:07,163 - INFO - Latitude, Longitude (61.0, -150.0)

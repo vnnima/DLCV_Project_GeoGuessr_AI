@@ -1,3 +1,4 @@
+from config import Config
 import os
 import sys
 from PIL import Image
@@ -10,12 +11,11 @@ import pandas as pd
 
 # Add the parent directory to the Python search path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import Config
 
 
-def create_map_plot(coords):
+def create_map_plot(coords, confidence):
     """Create a map plot with the given coordinates.
-    
+
     Args:
         coords (list): List of tuples with coordinates: (latitude, longitude)
     Returns:
@@ -23,25 +23,27 @@ def create_map_plot(coords):
     """
 
     df = pd.DataFrame(coords, columns=['lat', 'lng'])
+    df["confidence"] = confidence
+    df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 50
+    print(df)
     geometry = [Point(lng, lat) for lat, lng in coords]
-    gdf = GeoDataFrame(df, geometry=geometry)   
+    gdf = GeoDataFrame(df, geometry=geometry)
     # Set x-axis limits.
 
-
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-    ax = world.plot()
-    gdf.plot(ax=ax, marker='o', color='red', markersize=15);
+    ax = world.plot(color="#5c5c7e")
+    gdf.plot(ax=ax, marker='o', color='red', markersize=gdf["confidence"])
 
     minx = min([point.x for point in geometry])
     miny = min([point.y for point in geometry])
     maxx = max([point.x for point in geometry])
     maxy = max([point.y for point in geometry])
 
-    ax.set_xlim(minx - 10, maxx + 10)
-    ax.set_ylim(miny - 10, maxy + 10)
-
+    ax.set_xlim(minx - 20, maxx + 20)
+    ax.set_ylim(miny - 20, maxy + 20)
     plt.gca().set_axis_off()
-    plt.savefig(os.path.join(Config.PREDICTION_PLOT_PATH, 'prediction.png'), bbox_inches="tight", pad_inches=0.0)
+    plt.gcf().set_size_inches(3.5, 1)
+    plt.savefig(os.path.join(Config.PREDICTION_PLOT_PATH, 'prediction.png'), bbox_inches="tight", pad_inches=0.0, dpi=300)
 
 
 def create_combined_image(path):
@@ -49,27 +51,25 @@ def create_combined_image(path):
 
     Args:
         path (str): Path to the images
-    
+
     Returns:
         Image (PIL Image): Combined image
     """
 
-    image_paths = os.listdir(path)
+    image_paths = os.listdir(os.path.join(Config.CWD, "server", path))
     image_directions = [image_path.replace("image_", "").split(".")[0] for image_path in image_paths]
     images = dict(zip(image_directions, image_paths))
 
     pil_images = []
-    for direction in ["top","top_left", "bottom_left","bottom_right", "top_right"]:
+    for direction in ["top", "top_left", "bottom_left", "bottom_right", "top_right"]:
         pil_images.append(Image.open("images/" + images[direction]))
-
-
 
     # Crop the images and then paste them together
     new_im = Image.new('RGB', (Config.CROPPED_WIDTH * 5, Config.CROPPED_HEIGHT))
 
     x_offset = 0
     for im in pil_images:
-        width, height = im.size  
+        width, height = im.size
         # Crop the image at the center
         left = (width - Config.CROPPED_WIDTH)/2
         top = (height - Config.CROPPED_HEIGHT)/2
@@ -80,13 +80,7 @@ def create_combined_image(path):
         im = im.crop((left, top, right, bottom))
 
         new_im.paste(im, (x_offset, 0))
-        x_offset += im.size[0]  
-
+        x_offset += im.size[0]
 
     new_im = new_im.resize((Config.WIDTH, Config.HEIGHT), Image.ANTIALIAS)
     return new_im
-
-
-if __name__ == "__main__":
-    name = sys.argv[1] + ".jpg"
-    create_combined_image(Config.IMAGES_PATH).save(Config.DATASET_PATH + "\\" +name)

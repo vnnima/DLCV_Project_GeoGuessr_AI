@@ -14,11 +14,13 @@ function addLoadingSpinner() {
 function addModelResult(result) {
 	const { geohash, lat, lon } = JSON.parse(result);
 	dashboard.innerHTML = `
-	<div id="model-results">Model result:
-		<p>Geohash: ${geohash}</p>
-		<p>Lat: ${lat}</p>
-		<p>Lon: ${lon}</p>
-		<img style="width: 350px; height:100px;" src='../assets/prediction_plot/prediction.png' alt='Plot of top 5 predictions on world map'>
+	<div id="model-results">
+		<p><b>Model result:</b></p>
+		<ul>
+		<li>Latitude: ${lat}</li>
+		<li>Longitude: ${lon}</li>
+		</ul>
+		<img style="width: 300px; height:150px;" src='../assets/prediction_plot/prediction.png' alt='Plot of top 5 predictions on world map'>
 	</div>`;
 
 	const modelResults = document.querySelector("#model-results");
@@ -43,7 +45,6 @@ function addSubmitButton(token, cookie) {
 	// We keep track of the round number in the dashboard element as a "data-"" attribute
 	const roundNumber = dashboard.dataset.roundNumber;
 	dashboard.dataset.roundNumber = parseInt(roundNumber) + 1;
-	console.log(token);
 
 	buttons.querySelector("#play-geoguessr").style.display = "none";
 	const submitButton = document.createElement("button");
@@ -51,10 +52,6 @@ function addSubmitButton(token, cookie) {
 	submitButton.classList.add("btn");
 
 	submitButton.addEventListener("click", (e) => {
-		console.log(token);
-		console.log(roundNumber);
-		console.log(cookie);
-		console.log(cookie);
 		fetchSolutionData();
 	});
 	buttons.appendChild(submitButton);
@@ -75,7 +72,7 @@ collectDataButton.addEventListener("click", (e) => {
 	});
 });
 
-async function fetchSolutionData(cookie, token) {
+async function fetchSolutionData(currentRound, cookie, token, predictedLat = 50, predictedLng = 20) {
 	for (const keyValue of cookie.split(";")) {
 		document.cookie = `${keyValue}; SameSite=None; Secure;`;
 	}
@@ -85,19 +82,27 @@ async function fetchSolutionData(cookie, token) {
 			method: "POST",
 			credentials: "include",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ token: token, lat: 50.12345, lng: 20.12345, timedOut: false }),
+			body: JSON.stringify({ token: token, lat: predictedLat, lng: predictedLng, timedOut: false }),
 		});
 
 		// Make a request to the API which now has the solution data
 		const response = await fetch(`https://www.geoguessr.com/api/v3/games/${token}`);
 		const data = await response.json();
 
-		const roundNumber = data.round;
-		const { lat, lng } = data.rounds[roundNumber - 1];
-		const roundScore = data.player.guesses[roundNumber - 2].roundScore.amount;
-		const distance = data.player.guesses[roundNumber - 2].distance.meters.amount;
-		console.log({ lat, lng, roundScore, distance });
-		return { lat, lng, roundScore, distance };
+		console.log(data);
+
+		const currentRoundNumber = parseInt(data.round) - 1;
+		const roundNumber = parseInt(data.round);
+		const roundCount = parseInt(data.roundCount);
+
+		const map = data.map;
+		// Minus 1 because the round number is 1-indexed and the array is 0-indexed
+		const { lat, lng } = data.rounds[currentRound - 1];
+		const roundScoreInPercent = data.player.guesses[currentRound - 1].roundScoreInPercent;
+		const roundScoreInPoints = data.player.guesses[currentRound - 1].roundScoreInPoints;
+		const distanceInMeters = data.player.guesses[currentRound - 1].distanceInMeters;
+		const roundProgress = `${data.round}/${data.roundCount}`;
+		return { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount, data };
 	} catch (err) {
 		console.log(err);
 	}
@@ -122,23 +127,36 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			break;
 		}
 		case "create_image": {
+			const currentRound = parseInt(dashboard.dataset.roundNumber);
 			const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
 			const currentTabId = tabs[0].id;
-			// Start all over again
-			const { lat, lng } = await fetchSolutionData(request.cookie, request.token);
+
+			const { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount, data } = await fetchSolutionData(
+				currentRound,
+				request.cookie,
+				request.token
+			);
+			console.log(currentRoundNumber);
+			console.log(dashboard.dataset.roundNumber);
+
+			if (request.evaluate_performance) {
+				const res = await fetch("http://localhost:3000/evaluate-image");
+				const data = await res.json();
+				const { predictedLat, predictedLng } = data.result;
+			}
+
 			await createImage(lat, lng);
 
 			if (dashboard.dataset.roundNumber === "5") {
+				console.log("start new game");
 				chrome.tabs.update({ url: "https://www.geoguessr.com/maps/world/play" });
-				console.log("START NEW GAME");
 				await new Promise((resolve) => setTimeout(resolve, 2000));
+				const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+				const currentTabId = tabs[0].id;
 				await chrome.tabs.sendMessage(currentTabId, { msg: "start_new_game", tab: tabs[0] });
-				collectDataButton.click();
 				dashboard.dataset.roundNumber = 0;
-			}
-			{
+			} else {
 				chrome.tabs.sendMessage(currentTabId, { msg: "reload_page", tab: tabs[0] });
-				console.log(dashboard.dataset.roundNumber);
 			}
 
 			dashboard.dataset.roundNumber = parseInt(dashboard.dataset.roundNumber) + 1;
@@ -146,7 +164,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
 		}
 		case "collect_images": {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
-			console.log("COLLECT IMAGES");
 			collectDataButton.click();
 			break;
 		}

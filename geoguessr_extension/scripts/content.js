@@ -90,7 +90,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			// Move compass to the left
 			compassElem.dispatchEvent(createMouseMoveEvent(compassElem, -80, -23));
 			compassElem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
-			console.log(document.cookie);
 			await sleep(SLEEP_DURATION);
 			chrome.runtime.sendMessage({ msg: "screenshot", direction: "top_left", nextDirection: "end", cookie: document.cookie, mode: request.mode });
 			break;
@@ -99,10 +98,8 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			chrome.runtime.sendMessage({ msg: "collect_images" });
 			break;
 		case "start_new_game":
-			location.reload();
-			await sleep(SLEEP_DURATION);
-			const startGameButton = document.querySelector("[data-qa='start-game-button']");
-			startGameButton.click();
+			const startButton = document.querySelector("[data-qa='start-game-button']");
+			startButton.click();
 			chrome.runtime.sendMessage({ msg: "collect_images" });
 			break;
 	}

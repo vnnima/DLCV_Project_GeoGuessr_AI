@@ -28,9 +28,25 @@ function callModelScript(res) {
 	});
 }
 
+function callPerformanceScript(res) {
+	let dataToSend;
+	// const python = spawn("python", ["python/script.py"]);
+	const python = spawn(process.env.PYTHON_PATH, ["python/performance.py"]);
+
+	python.stdout.on("data", function (data) {
+		dataToSend = data.toString();
+	});
+
+	python.on("close", (code) => {
+		console.log(`child process close all stdio with code ${code}`);
+		console.log(dataToSend);
+		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend });
+	});
+}
+
 function callCreateDataScript(res, coords) {
 	const name = `img_${coords.join(",")}`;
-	const python = spawn(process.env.PYTHON_PATH, [`python/utils/load_image.py`, name]);
+	const python = spawn(process.env.PYTHON_PATH, [`python/collect_data.py`, name]);
 
 	let data;
 
@@ -45,22 +61,6 @@ function callCreateDataScript(res, coords) {
 	});
 }
 
-app.get("/", (req, res) => {
-	// const python = spawn(process.env.PYTHON_PATH, ["python/model.py"]);
-	// let dataToSend, errorToSend;
-	// python.stdout.on("data", function (data) {
-	// 	dataToSend = data.toString();
-	// });
-	// python.stderr.on("data", (data) => {
-	// 	errorToSend = data.toString();
-	// });
-	// python.on("close", (code) => {
-	// 	console.log(`child process close all stdio with code ${code}`);
-	// 	console.log(dataToSend);
-	// 	res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend, error: errorToSend });
-	// });
-});
-
 app.post("/create-image", (req, res) => {
 	callCreateDataScript(res, req.body.coords);
 	return;
@@ -68,6 +68,11 @@ app.post("/create-image", (req, res) => {
 
 app.get("/evaluate-image", (req, res) => {
 	callModelScript(res);
+	return;
+});
+
+app.post("/create-performance-data", (req, res) => {
+	callPerformanceScript(res);
 	return;
 });
 

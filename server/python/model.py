@@ -21,13 +21,13 @@ logging.basicConfig(filename='python/logging.log', filemode='a', level=logging.I
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-os.chdir(Config.CWD)
+os.chdir(os.path.join(Config.CWD, "server"))
 
 geo_code_to_geohash = create_geocode_mapping(Config.CSV_PATH)
 
 new_im = create_combined_image("images")
 
-new_im.save('images/combined_image.jpg')
+new_im.save("images/combined_image.png")
 
 
 # Load the model
@@ -39,13 +39,7 @@ checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, "pretrainedr
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 
-# optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-# epoch = checkpoint['epoch']
-# loss = checkpoint['loss']
-
-transform = transforms.Compose([transforms.ToTensor(),  
-                                # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),  # normalize images
-                                ])
+transform = transforms.Compose([transforms.ToTensor()])
 
 image_transformed = transform(new_im)
 
@@ -55,14 +49,16 @@ with torch.inference_mode():
     output = model(image_transformed.unsqueeze(0))[0]
 
     # Return the top 5 predictions
-    indices_sorted =np.argsort(-output)
+    indices_sorted = np.argsort(-output)
     top5 = indices_sorted[:5]
     top_5_coords = [pgh.decode(decimal_to_geohash(geo_code_to_geohash[int(index.data)])) for index in top5]
 
-    # logging.info("Top 5 coordinates", str(top_5_coords))
+    prediction_confidence = nn.functional.softmax(output, dim=0)
+    top5_predictions_confidence = prediction_confidence[top5]
 
+    # Create a plot of the top 5 predictions
+    create_map_plot(top_5_coords, top5_predictions_confidence.tolist())
 
-    create_map_plot(top_5_coords)
     index = output.data.cpu().numpy().argmax()
     geohash_decimal = geo_code_to_geohash[index]
     geohash = decimal_to_geohash(geohash_decimal)
@@ -74,6 +70,3 @@ with torch.inference_mode():
     result = {"geo-code": index, "geohash": geohash, "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1]}
     result = {key: str(value) for key, value in result.items()}
     print(json.dumps(result))
-
-
-
