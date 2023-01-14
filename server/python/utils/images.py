@@ -25,7 +25,6 @@ def create_map_plot(coords, confidence):
     df = pd.DataFrame(coords, columns=['lat', 'lng'])
     df["confidence"] = confidence
     df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 50
-    print(df)
     geometry = [Point(lng, lat) for lat, lng in coords]
     gdf = GeoDataFrame(df, geometry=geometry)
     # Set x-axis limits.
