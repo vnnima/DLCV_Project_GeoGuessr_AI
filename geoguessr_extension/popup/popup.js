@@ -102,7 +102,7 @@ async function fetchSolutionData(currentRound, cookie, token, predictedLat = 50,
 		const roundScoreInPoints = data.player.guesses[currentRound - 1].roundScoreInPoints;
 		const distanceInMeters = data.player.guesses[currentRound - 1].distanceInMeters;
 		const roundProgress = `${data.round}/${data.roundCount}`;
-		return { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount, data };
+		return { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount, allData: data };
 	} catch (err) {
 		console.log(err);
 	}
@@ -121,6 +121,7 @@ async function createImage(solutionLat, solutionLng) {
 }
 
 chrome.runtime.onMessage.addListener(async (request) => {
+	LOG_PERFORMANCE = true;
 	switch (request.msg) {
 		case "image_evaluated": {
 			addModelResult(request.result);
@@ -130,22 +131,62 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			const currentRound = parseInt(dashboard.dataset.roundNumber);
 			const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
 			const currentTabId = tabs[0].id;
-
-			const { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount, data } = await fetchSolutionData(
-				currentRound,
-				request.cookie,
-				request.token
-			);
-			console.log(currentRoundNumber);
-			console.log(dashboard.dataset.roundNumber);
-
-			if (request.evaluate_performance) {
+			if (LOG_PERFORMANCE) {
 				const res = await fetch("http://localhost:3000/evaluate-image");
-				const data = await res.json();
-				const { predictedLat, predictedLng } = data.result;
-			}
+				try {
+					const data = await res.json();
 
-			await createImage(lat, lng);
+					const { geocode, geohash, lat: predictedLat, lon: predictedLng } = JSON.parse(data.result);
+					console.log(predictedLat, predictedLng);
+					const { lat, lng, roundScoreInPercent, roundScoreInPoints, distanceInMeters, map, roundProgress, currentRoundNumber, roundCount } = await fetchSolutionData(
+						currentRound,
+						request.cookie,
+						request.token,
+						predictedLat,
+						predictedLng
+					);
+					console.log(
+						JSON.stringify({
+							predictedLat,
+							predictedLng,
+							solutionLat: lat,
+							solutionLng: lng,
+							geocode,
+							geohash,
+							roundScoreInPercent,
+							roundScoreInPoints,
+							distanceInMeters,
+							map,
+							currentRoundNumber: currentRound,
+						})
+					);
+					await fetch("http://localhost:3000/log-performance", {
+						method: "POST",
+						headers: { Accept: "application/json", "Content-Type": "application/json" },
+						body: JSON.stringify({
+							predictedLat,
+							predictedLng,
+							solutionLat: lat,
+							solutionLng: lng,
+							predictedLat,
+							predictedLng,
+							roundScoreInPercent,
+							roundScoreInPoints,
+							distanceInMeters,
+							map,
+							currentRoundNumber: currentRound,
+						}),
+					});
+				} catch (err) {
+					console.log(err);
+				}
+			} else {
+				const { lat, lng } = await fetchSolutionData(currentRound, request.cookie, request.token);
+				console.log(currentRoundNumber);
+				console.log(dashboard.dataset.roundNumber);
+
+				await createImage(lat, lng);
+			}
 
 			if (dashboard.dataset.roundNumber === "5") {
 				console.log("start new game");
