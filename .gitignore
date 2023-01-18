@@ -5,3 +5,4 @@ misc/
 __pycache__/
 server/node_modules/
 server/python/pretrained_models/
+dataset/

@@ -35,7 +35,7 @@ model = models.resnet50()
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, Config.NUM_CLASSES)
 
-checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, "pretrainedresnet50_14epoch.tar"), map_location=torch.device('cpu'))
+checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, Config.MODEL), map_location=torch.device('cpu'))
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 
@@ -67,6 +67,6 @@ with torch.inference_mode():
     logging.info(f"Geohash Code Prediction: { geohash }")
     logging.info(f"Latitude, Longitude {pgh.decode(geohash)}")
 
-    result = {"geo-code": index, "geohash": geohash, "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1]}
+    result = {"geocode": index, "geohash": geohash, "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1]}
     result = {key: str(value) for key, value in result.items()}
     print(json.dumps(result))
