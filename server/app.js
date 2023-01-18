@@ -28,22 +28,6 @@ function callModelScript(res) {
 	});
 }
 
-function callPerformanceScript(res) {
-	let dataToSend;
-	// const python = spawn("python", ["python/script.py"]);
-	const python = spawn(process.env.PYTHON_PATH, ["python/performance.py"]);
-
-	python.stdout.on("data", function (data) {
-		dataToSend = data.toString();
-	});
-
-	python.on("close", (code) => {
-		console.log(`child process close all stdio with code ${code}`);
-		console.log(dataToSend);
-		res.json({ name: "SUCCESS: Model evaluated.", result: dataToSend });
-	});
-}
-
 function callCreateDataScript(res, coords) {
 	const name = `img_${coords.join(",")}`;
 	const python = spawn(process.env.PYTHON_PATH, [`python/collect_data.py`, name]);
@@ -55,9 +39,26 @@ function callCreateDataScript(res, coords) {
 	});
 
 	python.stderr.on("data", function (data) {});
+
 	python.on("close", (code) => {
 		console.log(`child process close all stdio with code ${code}`);
 		res.json({ name: "SUCCESS: Image (sample) evaluated.", result: "IMAGE CREATED" });
+	});
+}
+
+function callLogPerformanceScript(res, data) {
+	dataJSON = JSON.stringify(data);
+	let dataToSend;
+	const python = spawn(process.env.PYTHON_PATH, ["python/performance.py", dataJSON]);
+
+	python.stdout.on("data", function (data) {
+		dataToSend = data.toString();
+	});
+
+	python.on("close", (code) => {
+		console.log(`child process close all stdio with code ${code}`);
+		console.log(dataToSend);
+		res.json({ name: "SUCCESS: Performance logged" });
 	});
 }
 
@@ -71,8 +72,10 @@ app.get("/evaluate-image", (req, res) => {
 	return;
 });
 
-app.post("/create-performance-data", (req, res) => {
-	callPerformanceScript(res);
+app.post("/log-performance", (req, res) => {
+	console.log("LETS GOT PERFORMANCE");
+	console.log(req.body);
+	callLogPerformanceScript(res, req.body);
 	return;
 });
 
