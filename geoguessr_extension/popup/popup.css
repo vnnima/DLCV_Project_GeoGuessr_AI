@@ -17,7 +17,20 @@ body {
 }
 
 header {
+	display: flex;
+	justify-content: space-between;
+}
+
+header > p {
 	font-size: 1.2rem;
+	margin: 0;
+}
+
+header > button {
+	border: none;
+	background-color: transparent;
+	color: #d8d8d8;
+	font-size: 1.5rem;
 }
 
 .dashboard {

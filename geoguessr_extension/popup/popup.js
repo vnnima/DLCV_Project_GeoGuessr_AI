@@ -1,6 +1,8 @@
 const takeScreenshotButton = document.querySelector("#play-geoguessr");
 const collectDataButton = document.querySelector("#collect-data");
+const closeButton = document.querySelector("#close");
 const dashboard = document.querySelector(".dashboard");
+
 const buttons = document.querySelector(".buttons");
 
 function addLoadingSpinner() {
@@ -20,42 +22,48 @@ function addModelResult(result) {
 		<li>Latitude: ${lat}</li>
 		<li>Longitude: ${lon}</li>
 		</ul>
-		<img style="width: 300px; height:150px;" src='../assets/prediction_plot/prediction.png' alt='Plot of top 5 predictions on world map'>
+		<img style="width: 308px; height:231px;" src='../assets/prediction_plot/prediction.png?${performance.now()}' alt='Plot of top 5 predictions on world map'></img>
 	</div>`;
 
 	const modelResults = document.querySelector("#model-results");
+
+	// Copy the model result to clipboard when clicking on the element
 	modelResults.addEventListener("click", (e) => {
 		const content = `${parseFloat(lat).toFixed(3)}, ${parseFloat(lon).toFixed(6)}`;
 		navigator.clipboard.writeText(content);
 	});
+
+	// Store the content of the dashboard element in the chrome storage
+	console.log("Content stored");
+	chrome.storage.session.set({ dashboard: dashboard.innerHTML }, () => {});
 }
 
-function addSolutionData() {
-	dashboard.innerHTML = "";
-	const solutionElem = document.createElement("div");
-	solutionElem.innerHTML = `
-						<p>Solution: ${solutionLat}, ${solutionLng}</p>}
-						<p>Round score: ${roundScore}</p>
-						<p>Distance: ${distance}</p>
-						`;
-	dashboard.appendChild(solutionElem);
-}
+// function addSolutionData() {
+// 	dashboard.innerHTML = "";
+// 	const solutionElem = document.createElement("div");
+// 	solutionElem.innerHTML = `
+// 						<p>Solution: ${solutionLat}, ${solutionLng}</p>}
+// 						<p>Round score: ${roundScore}</p>
+// 						<p>Distance: ${distance}</p>
+// 						`;
+// 	dashboard.appendChild(solutionElem);
+// }
 
-function addSubmitButton(token, cookie) {
-	// We keep track of the round number in the dashboard element as a "data-"" attribute
-	const roundNumber = dashboard.dataset.roundNumber;
-	dashboard.dataset.roundNumber = parseInt(roundNumber) + 1;
+// function addSubmitButton(token, cookie) {
+// 	// We keep track of the round number in the dashboard element as a "data-"" attribute
+// 	const roundNumber = dashboard.dataset.roundNumber;
+// 	dashboard.dataset.roundNumber = parseInt(roundNumber) + 1;
 
-	buttons.querySelector("#play-geoguessr").style.display = "none";
-	const submitButton = document.createElement("button");
-	submitButton.innerText = "Submit";
-	submitButton.classList.add("btn");
+// 	buttons.querySelector("#play-geoguessr").style.display = "none";
+// 	const submitButton = document.createElement("button");
+// 	submitButton.innerText = "Submit";
+// 	submitButton.classList.add("btn");
 
-	submitButton.addEventListener("click", (e) => {
-		fetchSolutionData();
-	});
-	buttons.appendChild(submitButton);
-}
+// 	submitButton.addEventListener("click", (e) => {
+// 		fetchSolutionData();
+// 	});
+// 	buttons.appendChild(submitButton);
+// }
 
 takeScreenshotButton.addEventListener("click", (e) => {
 	addLoadingSpinner();
@@ -69,6 +77,13 @@ collectDataButton.addEventListener("click", (e) => {
 	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 		const currentTabId = tabs[0].id;
 		chrome.tabs.sendMessage(currentTabId, { msg: "screenshot_content_top", tab: tabs[0], mode: "create-image" });
+	});
+});
+
+closeButton.addEventListener("click", (e) => {
+	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+		const currentTabId = tabs[0].id;
+		chrome.storage.session.clear();
 	});
 });
 
@@ -208,5 +223,14 @@ chrome.runtime.onMessage.addListener(async (request) => {
 			collectDataButton.click();
 			break;
 		}
+	}
+});
+
+// When the popup is opened, we check if the dashboard element has content
+// If it does, we display the content
+chrome.storage.session.get(["dashboard"], (result) => {
+	console.log("clicked");
+	if (result.dashboard) {
+		dashboard.innerHTML = result.dashboard;
 	}
 });
