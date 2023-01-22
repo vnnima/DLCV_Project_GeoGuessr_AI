@@ -41,23 +41,25 @@ class GeoGuessrDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
+
         img_name = os.path.join(self.root_dir,
                                 self.coordinates.iloc[idx, 0])
+                   
 
         image = io.imread(img_name)
         
+        ##########
         #adjusted vor Haversine
         lat = self.coordinates.iloc[idx, 1]
         lon = self.coordinates.iloc[idx, 2]
         ######################
-        
-        
+         
         geohash = self.coordinates.iloc[idx, 4]
         conti = self.coordinates.iloc[idx,6]
 
-        
         # Convert to one-hot vector
         geohash = F.one_hot(torch.tensor(geohash), num_classes=3139)
+        #geohash = F.one_hot(torch.tensor(geohash), num_classes=self.num_classes)
         conti = F.one_hot(torch.tensor(conti), num_classes=self.num_classes)
         
         #adjusted vor Haversine
