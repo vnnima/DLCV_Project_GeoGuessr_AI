@@ -20,6 +20,6 @@
 			"js": ["scripts/content.js"]
 		}
 	],
-	"permissions": ["activeTab", "downloads", "tabs"],
+	"permissions": ["activeTab", "downloads", "tabs", "storage"],
 	"host_permissions": ["<all_urls>"]
 }

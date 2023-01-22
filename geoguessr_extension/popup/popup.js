@@ -38,33 +38,6 @@ function addModelResult(result) {
 	chrome.storage.session.set({ dashboard: dashboard.innerHTML }, () => {});
 }
 
-// function addSolutionData() {
-// 	dashboard.innerHTML = "";
-// 	const solutionElem = document.createElement("div");
-// 	solutionElem.innerHTML = `
-// 						<p>Solution: ${solutionLat}, ${solutionLng}</p>}
-// 						<p>Round score: ${roundScore}</p>
-// 						<p>Distance: ${distance}</p>
-// 						`;
-// 	dashboard.appendChild(solutionElem);
-// }
-
-// function addSubmitButton(token, cookie) {
-// 	// We keep track of the round number in the dashboard element as a "data-"" attribute
-// 	const roundNumber = dashboard.dataset.roundNumber;
-// 	dashboard.dataset.roundNumber = parseInt(roundNumber) + 1;
-
-// 	buttons.querySelector("#play-geoguessr").style.display = "none";
-// 	const submitButton = document.createElement("button");
-// 	submitButton.innerText = "Submit";
-// 	submitButton.classList.add("btn");
-
-// 	submitButton.addEventListener("click", (e) => {
-// 		fetchSolutionData();
-// 	});
-// 	buttons.appendChild(submitButton);
-// }
-
 takeScreenshotButton.addEventListener("click", (e) => {
 	addLoadingSpinner();
 	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
