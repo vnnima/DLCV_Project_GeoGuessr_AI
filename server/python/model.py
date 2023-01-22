@@ -39,13 +39,12 @@ checkpoint = torch.load(os.path.join(Config.PRETRAINED_MODELS_PATH, Config.MODEL
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 
-transform = transforms.Compose([transforms.ToTensor()])
+transform = transforms.Compose([     transforms.ToTensor(),   transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),     transforms.Resize((250, 1000)) ])
 
 image_transformed = transform(new_im)
 
 with torch.inference_mode():
-    # TODO: Why does the output tensor have 2 dimensions and why do we have to unsqueeze(0) add one dimension?
-    # Probably because the model expects a batch of images, which adds an additional dimension?
+    # Model expects a batch of images, therefore we add an additional dimension for the batch dimension
     output = model(image_transformed.unsqueeze(0))[0]
 
     # Return the top 5 predictions
