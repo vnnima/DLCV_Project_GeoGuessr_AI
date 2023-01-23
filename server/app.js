@@ -38,8 +38,6 @@ function callCreateDataScript(res, coords) {
 		data = data.toString();
 	});
 
-	python.stderr.on("data", function (data) {});
-
 	python.on("close", (code) => {
 		console.log(`child process close all stdio with code ${code}`);
 		res.json({ name: "SUCCESS: Image (sample) evaluated.", result: "IMAGE CREATED" });
@@ -73,8 +71,6 @@ app.get("/evaluate-image", (req, res) => {
 });
 
 app.post("/log-performance", (req, res) => {
-	console.log("LETS GOT PERFORMANCE");
-	console.log(req.body);
 	callLogPerformanceScript(res, req.body);
 	return;
 });

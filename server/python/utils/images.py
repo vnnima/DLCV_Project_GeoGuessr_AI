@@ -24,22 +24,25 @@ def create_map_plot(coords, confidence):
 
     df = pd.DataFrame(coords, columns=['lat', 'lng'])
     df["confidence"] = confidence
-    df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 50
+    # Scale the confidence values to use them as marker sizes
+    df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 30
     geometry = [Point(lng, lat) for lat, lng in coords]
     gdf = GeoDataFrame(df, geometry=geometry)
-    # Set x-axis limits.
 
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
     ax = world.plot(color="#5c5c7e")
     gdf.plot(ax=ax, marker='o', color='red', markersize=gdf["confidence"])
 
+    # Set the x and y limits of the plot
     minx = min([point.x for point in geometry])
     miny = min([point.y for point in geometry])
     maxx = max([point.x for point in geometry])
     maxy = max([point.y for point in geometry])
 
+    # Add some padding to the plot
     ax.set_xlim(minx - 20, maxx + 20)
     ax.set_ylim(miny - 20, maxy + 20)
+
     plt.gca().set_axis_off()
     plt.gcf().set_size_inches(3.5, 1)
     plt.savefig(os.path.join(Config.PREDICTION_PLOT_PATH, 'prediction.png'), bbox_inches="tight", pad_inches=0.0, dpi=300)
@@ -70,10 +73,10 @@ def create_combined_image(path):
     for im in pil_images:
         width, height = im.size
         # Crop the image at the center
-        left = (width - Config.CROPPED_WIDTH)/2
-        top = (height - Config.CROPPED_HEIGHT)/2
-        right = (width + Config.CROPPED_WIDTH)/2
-        bottom = (height + Config.CROPPED_HEIGHT)/2
+        left = (width - Config.CROPPED_WIDTH) / 2
+        top = (height - Config.CROPPED_HEIGHT) / 2
+        right = (width + Config.CROPPED_WIDTH) / 2
+        bottom = (height + Config.CROPPED_HEIGHT) / 2
 
         # Paste the cropped image into the new image
         im = im.crop((left, top, right, bottom))
