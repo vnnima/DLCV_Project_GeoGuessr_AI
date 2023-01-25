@@ -7,6 +7,7 @@ class Config:
     HEIGHT = 512
     WIDTH = 2560
     NUM_CLASSES = 3139
+    WEIGHTED_MIDPOINT = True
 
     CWD = os.path.dirname(os.getcwd())
     PRETRAINED_MODELS_PATH = os.path.join(CWD, "server", "python", "pretrained_models")

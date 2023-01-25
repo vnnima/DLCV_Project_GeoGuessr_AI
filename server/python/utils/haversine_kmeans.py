@@ -6,7 +6,7 @@ class HaversineKMeans:
         pass
 
     @staticmethod
-    def CompMeans(Points) -> torch.tensor:
+    def CompMeans(Points, Weights):
         """
         Calls the function recursively, always calculating the midpoint between two points. Either:
         - Between the first to points
@@ -17,13 +17,16 @@ class HaversineKMeans:
         K = Points.size(0)
         if (K == 2):
             # Endcase of recursion
-            return HaversineKMeans.MidPoint(Points[1:2, :], Points[0:1, :], 1 / K)
+            point, w = HaversineKMeans.MidPoint(Points[1:2, :], Points[0:1, :], Weights[1], Weights[0])
+            return point, w
         else:
             # Standard case of recursion
-            return HaversineKMeans.MidPoint(HaversineKMeans.CompMeans(Points[1:, :]), Points[0:1, :], 1 / K)
+            fPoint, fW = HaversineKMeans.CompMeans(Points[1:, :], Weights[1:])
+            point, w = HaversineKMeans.MidPoint(fPoint, Points[0:1, :], fW, Weights[0])
+            return point, w
 
     @staticmethod
-    def MidPoint(x, y, w_y) -> torch.tensor:
+    def MidPoint(x, y, w_x, w_y) -> torch.tensor:
         """
         x and y as Radians.
 
@@ -33,7 +36,7 @@ class HaversineKMeans:
         phi_2 = y[:, 0]
         lambda_1 = x[:, 1]
         lambda_2 = y[:, 1]
-        f = w_y
+        f = w_y / ((w_x + w_y))
 
         delta = HaversineKMeans.Haversine(x, y)
         if (delta == 0):
@@ -51,7 +54,7 @@ class HaversineKMeans:
         lambda_i = torch.atan2(new_y, new_x)
 
         res = torch.cat((phi_i, lambda_i), 0)[None, :]  # Add additional dimension to fit other values dimensions
-        return res
+        return res, w_x + w_y
 
     @staticmethod
     def Haversine(x, y):
@@ -65,6 +68,9 @@ class HaversineKMeans:
 
 if __name__ == "__main__":
     hvk = HaversineKMeans()
-    midpoint = hvk.CompMeans(torch.deg2rad(torch.tensor([(40.7128, 74.0060), (35.6895, 139.6917), (37.7749, 122.4194)])))
+    points = torch.deg2rad(torch.tensor([(40.7128, 74.0060), (62.289834, 108.169635), (35.6895, 139.6917)]))
+    weights = [1 / 3, 1 / 3, 1 / 3]
+    weights = [1 / 10, 8 / 10, 1 / 10]
+    midpoint = hvk.CompMeans(points, weights)
     print(midpoint)
-    print(torch.rad2deg(midpoint))
+    print(torch.rad2deg(midpoint[0])[0])
