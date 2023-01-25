@@ -20,7 +20,7 @@ from config import Config
 
 
 def end_to_end_prediction(image):
-    """Make a prediction on a single image using the end to end model
+    """Make a prediction on a single image using the end to end model.
 
     Args:
         image (PIL Image): Image to make a prediction on
@@ -98,56 +98,55 @@ def sequential_prediction(image, conti=None):
     with torch.inference_mode():
         output = model(image_transformed.unsqueeze(0))[0]
 
-        # new stuff
         _, pred = torch.max(output, -1)
-        # v = np.argmax(conti)
-        print(pred)
 
-        if pred < 6:
-            if pred > 3:
-                pred -= 1
-            # if np.argmax(conti) > 3:
-            #     v -= 1
-
-            # Load the model which corresponds to the predicted continent
-            model_names = ['South_America', 'Asia', 'Africa',
-                           'Oceania', 'North_America', 'Europe']
-            model_output_parameters = [447, 734, 183, 172, 779, 745]
-            model.fc = nn.Linear(num_ftrs, model_output_parameters[pred])
-            checkpoint = torch.load(os.path.join(
-                Config.CONTINENT_MODELS_PATH, "pretrainedresnet50_14epoch_" + model_names[pred] + ".tar"), map_location=torch.device('cpu'))
-            model.load_state_dict(checkpoint['model_state_dict'])
-            model.eval()
-
-            output = model(image_transformed.unsqueeze(0))[0]
-
-            # Return the top 5 predictions
-            indices_sorted = np.argsort(-output)
-            top5 = indices_sorted[:5]
-
-            continent_label = model_names[pred]
-            if continent_label == 'South_America':
-                continent_label = 'South America'
-            elif continent_label == 'North_America':
-                continent_label = 'North America'
-
-            # Dictionary (pandas.Series???) to map the geocode predictions to geohashes
-            geohashes_with_samples = create_continent_geocode_mapping(
-                Config.SEQUENTIAL_CSV_PATH, continent_label)
-
-            top_5_coords = [pgh.decode(
-                geohashes_with_samples[int(index.data)]) for index in top5]
-            prediction_confidence = nn.functional.softmax(output, dim=0)
-            top5_predictions_confidence = prediction_confidence[top5]
-
-            # Create a plot of the top 5 predictions
-            create_map_plot(top_5_coords, top5_predictions_confidence.tolist())
-
-            # Get the prediction with the highest score
-            index = output.data.cpu().numpy().argmax()
-            geohash = geohashes_with_samples[int(index)]
-
-            result = {"geocode": index, "geohash": geohash,
-                      "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1]}
+        # If the continent is antarctica, return a fixed geohash. Antarctica isn't relevant for this model because it has very few samples in the dataset.
+        if pred == 4:
+            result = {"geocode": 12345, "geohash": "pdn",
+                      "lat": -77.72, "lon": 167.01}
             result = {key: str(value) for key, value in result.items()}
             print(json.dumps(result))
+            return
+
+        # Load the model which corresponds to the predicted continent
+        model_names = ['South_America', 'Asia', 'Africa',
+                       'Oceania', "Antarctica", 'North_America', 'Europe']
+        model_output_parameters = [447, 734, 183, 172, 0, 779, 745]
+        model.fc = nn.Linear(num_ftrs, model_output_parameters[pred])
+        checkpoint = torch.load(os.path.join(
+            Config.CONTINENT_MODELS_PATH, "pretrainedresnet50_14epoch_" + model_names[pred] + ".tar"), map_location=torch.device('cpu'))
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
+
+        output = model(image_transformed.unsqueeze(0))[0]
+
+        # Return the top 5 predictions
+        indices_sorted = np.argsort(-output)
+        top5 = indices_sorted[:5]
+
+        continent_label = model_names[pred]
+        if continent_label == 'South_America':
+            continent_label = 'South America'
+        elif continent_label == 'North_America':
+            continent_label = 'North America'
+
+        # Dictionary (pandas.Series???) to map the geocode predictions to geohashes
+        geohashes_with_samples = create_continent_geocode_mapping(
+            Config.SEQUENTIAL_CSV_PATH, continent_label)
+
+        top_5_coords = [pgh.decode(
+            geohashes_with_samples[int(index.data)]) for index in top5]
+        prediction_confidence = nn.functional.softmax(output, dim=0)
+        top5_predictions_confidence = prediction_confidence[top5]
+
+        # Create a plot of the top 5 predictions
+        create_map_plot(top_5_coords, top5_predictions_confidence.tolist())
+
+        # Get the prediction with the highest score
+        index = output.data.cpu().numpy().argmax()
+        geohash = geohashes_with_samples[int(index)]
+
+        result = {"geocode": index, "geohash": geohash,
+                  "lat": pgh.decode(geohash)[0], "lon": pgh.decode(geohash)[1]}
+        result = {key: str(value) for key, value in result.items()}
+        print(json.dumps(result))
