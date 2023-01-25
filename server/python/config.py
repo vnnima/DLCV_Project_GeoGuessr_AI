@@ -7,17 +7,18 @@ class Config:
     HEIGHT = 512
     WIDTH = 2560
     NUM_CLASSES = 3139
-    WEIGHTED_MIDPOINT = True
+    WEIGHTED_MIDPOINT = False
 
     CWD = os.path.dirname(os.getcwd())
     PRETRAINED_MODELS_PATH = os.path.join(CWD, "server", "python", "pretrained_models")
     CONTINENT_MODELS_PATH = os.path.join(PRETRAINED_MODELS_PATH, "continent_models")
     MODEL = "pretrainedresnet50_14epoch_contihead.tar"
-    MODE = "SEQUENTIAL"
 
-    CSV_PATH = os.path.join(CWD, "server", "python", "utils", "coordinates2.csv")
-    SEQUENTIAL_CSV_PATH = os.path.join(CWD, "server", "python", "utils", "coordinates_sequential.csv")
-    DATASET_PATH = os.path.join(CWD, "server", "python", "dataset")
+    PYTHON_PATH = os.path.join(CWD, "server", "python")
+    UTILS_PATH = os.path.join(PYTHON_PATH, "utils")
+    PERFORMANCE_PATH = os.path.join(PYTHON_PATH, "performance")
+    DATASET_PATH = os.path.join(PYTHON_PATH, "dataset")
+    SEQUENTIAL_CSV_PATH = os.path.join(UTILS_PATH, "coordinates_sequential.csv")
+    CSV_PATH = os.path.join(UTILS_PATH, "coordinates_end_to_end.csv")
     IMAGES_PATH = os.path.join(CWD, "server", "images")
-    PERFORMANCE_PATH = os.path.join(CWD, "server", "python", "performance")
     PREDICTION_PLOT_PATH = os.path.join(CWD, "geoguessr_extension", "assets", "prediction_plot")
