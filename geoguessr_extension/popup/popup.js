@@ -14,7 +14,7 @@ function addLoadingSpinner() {
 }
 
 function addModelResult(result) {
-	const { geohash, lat, lon } = JSON.parse(result);
+	const { lat, lon } = JSON.parse(result);
 	dashboard.innerHTML = `
 	<div id="model-results">
 		<p><b>Model result:</b></p>
@@ -112,6 +112,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
 	LOG_PERFORMANCE = true;
 	switch (request.msg) {
 		case "image_evaluated": {
+			console.log(request.result);
 			addModelResult(request.result);
 			break;
 		}
@@ -200,7 +201,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
 });
 
 // When the popup is opened, we check if the dashboard element has content
-// If it does, we display the content
+// If it does display the content
 chrome.storage.session.get(["dashboard"], (result) => {
 	console.log("clicked");
 	if (result.dashboard) {

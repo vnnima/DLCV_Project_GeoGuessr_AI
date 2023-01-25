@@ -14,12 +14,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def create_map_plot(coords, confidence):
-    """Create a map plot with the given coordinates.
+    """Create a plot of the given coordinates and save it to the prediction plot path.
+    The plot shows the top n predictions and scales the marker size based on the confidence.
 
     Args:
-        coords (list): List of tuples with coordinates: (latitude, longitude)
-    Returns:
-        None
+        coords (list): List of tuples with predicted coordinates: (latitude, longitude)
+        confidence (list): List of confidence values. These are the softmax values of the predictions.
     """
 
     df = pd.DataFrame(coords, columns=['lat', 'lng'])
