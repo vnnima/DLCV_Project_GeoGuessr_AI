@@ -1,22 +1,19 @@
-
+from config import Config
+from . haversine_kmeans import HaversineKMeans
+from .images import create_map_plot
+from .geohash_conversion import decimal_to_geohash, create_geocode_mapping, create_continent_geocode_mapping
+import pygeohash as pgh
+import numpy as np
+from torchvision import models
+import torchvision.transforms as transforms
+import torch.nn.functional as F
+import torch.nn as nn
+import torch
 import os
 import sys
 import json
 # Add the parent directory to the Python search path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torchvision.transforms as transforms
-from torchvision import models
-import numpy as np
-import pygeohash as pgh
-
-from .geohash_conversion import decimal_to_geohash, create_geocode_mapping, create_continent_geocode_mapping
-from .images import create_map_plot
-from . haversine_kmeans import HaversineKMeans
-from config import Config
 
 
 def end_to_end_prediction(image):
@@ -25,21 +22,43 @@ def end_to_end_prediction(image):
     Args:
         image (PIL Image): Image to make a prediction on
     """
+    if "resnet" in Config.MODEL:
+        # Load the model
+        model = models.resnet50()
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, Config.NUM_CLASSES)
+        checkpoint = torch.load(os.path.join(
+            Config.PRETRAINED_MODELS_PATH, Config.MODEL), map_location=torch.device('cpu'))
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
 
-    # Load the model
-    model = models.resnet50()
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, Config.NUM_CLASSES)
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize(
+                                            mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+                                        transforms.Resize((250, 1000))])
+    elif "transformer" in Config.MODEL:
+        model = models.vit_b_16(weights='IMAGENET1K_SWAG_E2E_V1')
+        model.heads.head = nn.Linear(768, 3139)
+        checkpoint = torch.load(os.path.join(
+            Config.PRETRAINED_MODELS_PATH, Config.MODEL), map_location=torch.device('cpu'))
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize(
+                                            mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+                                        transforms.Resize((384, 384))])
+    elif "regression" in Config.MODEL:
+        model = models.resnet18()
+        model.fc = nn.Linear(512, 2)
+        checkpoint = torch.load(os.path.join(
+            Config.PRETRAINED_MODELS_PATH, Config.MODEL), map_location=torch.device('cpu'))
+        model.load_state_dict(checkpoint)
+        model.eval()
 
-    checkpoint = torch.load(os.path.join(
-        Config.PRETRAINED_MODELS_PATH, Config.MODEL), map_location=torch.device('cpu'))
-    model.load_state_dict(checkpoint['model_state_dict'])
-    model.eval()
-
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize(
-                                        mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
-                                    transforms.Resize((250, 1000))])
+        transform = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Normalize(
+                                            mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+                                        transforms.Resize((250, 1000))])
 
     # Dictionary to map the geocode predictions to geohashes
     geo_code_to_geohash = create_geocode_mapping(Config.CSV_PATH)
@@ -72,7 +91,7 @@ def end_to_end_prediction(image):
             lon = torch.rad2deg(midpoint[0])[0][1].item()
             geohash = pgh.encode(lat, lon)
             result = {"geocode": 0, "geohash": geohash,
-                      "lat": lat, "lon": lon}
+                      "lat": lat, "lon": lon, "midpoint": True, "model": Config.MODEL}
             result = {key: str(value) for key, value in result.items()}
             print(json.dumps(result))
             return
@@ -82,7 +101,7 @@ def end_to_end_prediction(image):
         geohash = decimal_to_geohash(geohash_decimal)
 
         result = {"geocode": index, "geohash": geohash,
-                  "lat": pgh.decode_exactly(geohash)[0], "lon": pgh.decode_exactly(geohash)[1]}
+                  "lat": pgh.decode_exactly(geohash)[0], "lon": pgh.decode_exactly(geohash)[1], "model": Config.MODEL}
         result = {key: str(value) for key, value in result.items()}
         print(json.dumps(result))
 
@@ -178,6 +197,6 @@ def sequential_prediction(image, conti=None):
         geohash = geohashes_with_samples[int(index)]
 
         result = {"geocode": index, "geohash": geohash,
-                  "lat": pgh.decode_exactly(geohash)[0], "lon": pgh.decode_exactly(geohash)[1]}
+                  "lat": pgh.decode_exactly(geohash)[0], "lon": pgh.decode_exactly(geohash)[1], "model": Config.MODEL}
         result = {key: str(value) for key, value in result.items()}
         print(json.dumps(result))
