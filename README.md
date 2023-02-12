@@ -17,8 +17,8 @@ This chrome extension is used to test the model in-game and measure their perfor
 
 ### **Usage**
 
-1. Make sure that the local server is up and running. The setup for the local server is described in this section.
-1. Open the Google Chrome browser and navigate to the [GeoGuessr](https://www.geoguessr.com/) website and start a game on the world map. (You need to have a google account to play the game.)
+1. Make sure that the local server is up and running. The setup for the local server is described in this [section](##Node-Server).
+1. Open the Google Chrome browser and navigate to the [GeoGuessr](https://www.geoguessr.com/) website and start a game on the world map. (You need to have a GeoGuessr account to play the game.)
 1. After starting the game and seeing the Google Street View panorama, click on the extension icon to activate it.
 1. Then press the play button. The extension will take five screenshots of the streetview images and use them to make a prediction. While the extension is making the prediction don't change the current tab or click on anything. The prediction will be displayed on the screen after a few seconds (depending on your hardware this might take longer).
 1. In the `config.py` file located `server/python/` folder you can change the model that is used for the prediction. A detailed explanation about the configuration can be found in the `config.py` file.
@@ -32,7 +32,7 @@ This chrome extension is used to test the model in-game and measure their perfor
 - A local nodejs server
 - Python 3.8 >=
 
-## Node Server
+## Node-Server
 This node server is used to receive the screenshots from the chrome extension and run the python script that utilizes the AI model to make a prediction. The prediction is then sent back to the chrome extension.
 
 ### **Installation and Setup**
