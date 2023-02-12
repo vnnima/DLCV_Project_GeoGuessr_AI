@@ -25,7 +25,7 @@ def create_map_plot(coords, confidence):
     df = pd.DataFrame(coords, columns=['lat', 'lng'])
     df["confidence"] = confidence
     # Scale the confidence values to use them as marker sizes
-    df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 30
+    df["confidence"] = (df["confidence"] / df["confidence"].sum()) * 10
     geometry = [Point(lng, lat) for lat, lng in coords]
     gdf = GeoDataFrame(df, geometry=geometry)
 
