@@ -1,4 +1,4 @@
-# DLCV_Project_GeoGuessr_AI
+# Outperforming Humans in GeoGuessr with Deep Learning - DLCV Project
 
 - [DLCV\_Project\_GeoGuessr\_AI](#dlcv_project_geoguessr_ai)
   - [Introduction](#introduction)
