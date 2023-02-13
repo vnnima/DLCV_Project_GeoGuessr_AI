@@ -29,7 +29,7 @@ This chrome extension is used to test the model in-game and measure their perfor
 1. Open the Google Chrome browser and navigate to the [GeoGuessr](https://www.geoguessr.com/) website and start a game on the world map. (You need to have a GeoGuessr account to play the game.)
 1. After starting the game and seeing the Google Street View panorama, click the gear icon in the bottom left corner of the screen and turn "Classic Compass" on.
 1. Now you can start the extension by clicking on the extension icon in the top right corner of the browser. The extension icon should look like a globe with some markers on it.
-1. Then press the play button. The extension will take five screenshots of the streetview images and use them to make a prediction. While the extension is making the prediction don't change the current tab or click on anything. The prediction will be displayed on the screen after a few seconds (depending on your hardware this might take longer).
+1. Then press the play button. The extension will take five screenshots of the Street View images and use them to make a prediction. While the extension is making the prediction don't change the current tab or click on anything. The prediction will be displayed on the screen after a few seconds (depending on your hardware this might take longer).
 1. In the `config.py` file located `server/python/` folder you can change the model that is used for the prediction. A detailed explanation about the configuration can be found in the `config.py` file.
 
 
