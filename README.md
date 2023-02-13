@@ -17,6 +17,7 @@ This project is a part of the "Deep Learning for Computer Vision" (2023) course 
 
 Our project's main objective is to achieve optimal performance in the [GeoGuessr](https://www.geoguessr.com/) game and improve the accuracy of existing models. To achieve this, we conducted an extensive literature review and tested various computer vision techniques to determine the most effective model for our task. Our findings indicate that using regular ResNets with an end-to-end learning approach was the most effective approach. Additionally, we found that data augmentation, a custom loss-function specifically designed for this task, and increasing the size of the dataset also produced positive results.
 
+We would like to express our gratitude to [Traversed](https://www.youtube.com/@TraversedTV), whose [youtube video](https://www.youtube.com/watch?v=0k-SJgv-laM) inspired us to undertake this project and who was so kind to share his dataset with us.
 
 ## Chrome Extension
 
