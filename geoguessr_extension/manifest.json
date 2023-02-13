@@ -1,0 +1,25 @@
+{
+	"manifest_version": 3,
+	"name": "Screenshot Extension New",
+	"version": "1.0",
+	"icons": {
+		"16": "assets/icons/globe16.png",
+		"32": "assets/icons/globe24.png",
+		"48": "assets/icons/globe32.png",
+		"128": "assets/icons/globe128.png"
+	},
+	"background": {
+		"service_worker": "scripts/background.js"
+	},
+	"action": {
+		"default_popup": "popup/popup.html"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://www.geoguessr.com/**", "*://*/*"],
+			"js": ["scripts/content.js"]
+		}
+	],
+	"permissions": ["activeTab", "downloads", "tabs", "storage"],
+	"host_permissions": ["<all_urls>"]
+}

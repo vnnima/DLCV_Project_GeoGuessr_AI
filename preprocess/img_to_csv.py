@@ -16,7 +16,7 @@ def extract_coordinates(filenames):
     coordinates = []
 
     for filename in filenames:
-        latitude = filename.split(',')[0]
+        latitude = filename.split(',')[0].replace('img_', "")
         longitude = filename.split(',')[1].replace('.jpg', "")
         coordinates.append((filename, latitude, longitude))
 
@@ -24,7 +24,7 @@ def extract_coordinates(filenames):
 
 
 def main():
-    IMAGE_DIR = "D:\\geogussr1"
+    IMAGE_DIR = r"C:\Users\valdr\datasets\geoguessr-data\geoguessr_complete"
 
     # Get the filenames
     filenames = get_filenames(IMAGE_DIR)
@@ -33,7 +33,7 @@ def main():
     coordinates = extract_coordinates(filenames)
 
     # Write the coordinates to a csv file
-    with open("coordinates.csv", "w", newline="") as f:
+    with open("coordinates_complete.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["filename", "latitude", "longitude"])
         writer.writerows(coordinates)
