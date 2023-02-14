@@ -27,8 +27,8 @@ This chrome extension is used to test the models in-game and measure their perfo
 
 - Chromium based browser
 - A local nodejs server
-- Python 3.8 or higher 
-- PyTorch, pandas, haversine, pygeohash
+- Python 3.9
+- PyTorch, pandas, haversine, pygeohash, matplotlib
 
 ### **Installation and Setup**
 
