@@ -11,6 +11,10 @@
     - [**Installation and Setup**](#installation-and-setup-1)
 
 
+
+https://github.com/vnnima/DLCV_Project_GeoGuessr_AI/assets/95927578/9b32a903-25a2-4d33-97a3-53f2e647810e
+
+
 ## Introduction
 In this repository, you will find the code for our project, which is aimed at developing a machine learning model that can predict the geographic location of an image.
 This project is a part of the "Deep Learning for Computer Vision" (2023) course at the Goethe University Frankfurt by Prof. Dr. Gemma Roig. 
